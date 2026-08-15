@@ -1,0 +1,13 @@
+{
+  "name": "lining-lo-notes",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "overview": "node .scripts/overview.mjs",
+    "sync": "node .scripts/sync-site.mjs",
+    "build:site": "pnpm --dir blog build",
+    "scan": "node .scripts/scan-docs.mjs",
+    "update": "node .scripts/scan-docs.mjs && node .scripts/overview.mjs && node .scripts/sync-site.mjs"
+  },
+  "packageManager": "pnpm@11.16.0"
+}
