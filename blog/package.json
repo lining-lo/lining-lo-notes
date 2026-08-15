@@ -1,0 +1,17 @@
+{
+  "name": "lining-lo-notes-blog",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "rspress dev",
+    "build": "rspress build",
+    "preview": "rspress preview",
+    "sitemap": "node ./script/sitemap.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "rspress": "^1.45.0",
+    "typescript": "^5.2.2"
+  },
+  "packageManager": "pnpm@11.16.0"
+}

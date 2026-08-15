@@ -1,0 +1,64 @@
+name: Deploy Blog to GitHub Pages
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: blog/pnpm-lock.yaml
+
+      - name: Sync blog source
+        run: node .scripts/sync-site.mjs
+
+      - name: Install dependencies
+        run: pnpm --dir blog install --frozen-lockfile
+
+      - name: Build site
+        run: pnpm --dir blog build
+
+      - name: Generate sitemap
+        run: node blog/script/sitemap.mjs
+
+      - name: Add .nojekyll
+        run: touch blog/site-dev/.nojekyll
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: blog/site-dev
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
