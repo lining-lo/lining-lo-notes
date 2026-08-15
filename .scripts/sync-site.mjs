@@ -138,6 +138,12 @@ const syncDocs = async () => {
       for (const r of replaces) {
         content = content.slice(0, r.start) + r.text + content.slice(r.end);
       }
+      // 去掉只包裹图片的裸 HTML <p ...> 标签：Rspress 不解析 HTML 块里的 Markdown 图片，
+      // 例如 <p align="center">![x](./a.svg)</p> 里的图片不会显示，需去掉 <p> 外壳
+      content = content.replace(
+        /<p\b[^>]*>\s*((?:!\[[^\]]*\]\([^)]*\)\s*)+)<\/p>/gi,
+        (_match, imgs) => imgs.replace(/\s*\n\s*/g, "\n").trim(),
+      );
       await fs.writeFile(path.join(to, `${mdName}.md`), content);
     }
   }

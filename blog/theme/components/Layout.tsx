@@ -90,7 +90,8 @@ function applyAsideHighlight(scrollPaddingTop: number) {
     .forEach((el) => el.classList.remove("aside-active"));
   const href = links[activeIndex].getAttribute("href");
   const target = aside.querySelector(`a[href="#${href?.slice(1)}"]`);
-  if (target) target.classList.add("aside-active");
+  if (!target) return;
+  target.classList.add("aside-active");
 }
 
 // Rspress 默认不把一级标题放进右侧目录，这里把正文里的 h1 补进目录，
