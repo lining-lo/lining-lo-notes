@@ -61,5 +61,16 @@ export const docs = {
     "shopkeeper_brain/18_答案生成节点",
     "shopkeeper_brain/19_查询流程与前端对接",
     "shopkeeper_brain/20_项目总结"
+  ],
+  "shopkeeper-ask-data": [
+    "shopkeeper-ask-data/01_项目全景",
+    "shopkeeper-ask-data/02_运行项目测试",
+    "shopkeeper-ask-data/03_项目概述与架构",
+    "shopkeeper-ask-data/04_项目开发环境",
+    "shopkeeper-ask-data/05_基础设施搭建",
+    "shopkeeper-ask-data/06_元数据知识库",
+    "shopkeeper-ask-data/07_问数智能体",
+    "shopkeeper-ask-data/08_API接口",
+    "shopkeeper-ask-data/09_前后端联调"
   ]
 };
