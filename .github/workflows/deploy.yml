@@ -26,8 +26,8 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 11
+        # 版本以根目录 package.json 的 "packageManager": "pnpm@11.16.0" 为准，
+        # 不要同时写 version，否则 action 会报 Multiple versions of pnpm specified
 
       - name: Setup Node
         uses: actions/setup-node@v4
