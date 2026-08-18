@@ -9,7 +9,7 @@
 - 使用说明：[USAGE.md](./USAGE.md)
 
 <!-- Summary Start -->
-版本库中共有 `57` 篇文章，总计 `85726` 行，`499377` 字，`1479651` 字符。
+版本库中共有 `56` 篇文章，总计 `85377` 行，`496046` 字，`1472903` 字符。
 <!-- Summary End -->
 
 <!-- Content Start -->
@@ -41,9 +41,6 @@
 
 ## CSS
 * [CSS语法](CSS/CSS语法.md)
-
-## Java
-* [Java开发环境搭建](Java/Java开发环境搭建.md)
 
 ## JavaScript
 * [Ajax请求](JavaScript/Ajax请求.md)
