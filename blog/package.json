@@ -8,6 +8,9 @@
     "preview": "rspress preview",
     "sitemap": "node ./script/sitemap.mjs"
   },
+  "dependencies": {
+    "mermaid": "^11.0.0"
+  },
   "devDependencies": {
     "@types/node": "^22.0.0",
     "rspress": "^1.45.0",
