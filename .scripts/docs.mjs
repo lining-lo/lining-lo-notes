@@ -30,9 +30,6 @@ export const docs = {
   "CSS": [
     "CSS/CSS语法"
   ],
-  "Java": [
-    "Java/Java开发环境搭建"
-  ],
   "JavaScript": [
     "JavaScript/Ajax请求",
     "JavaScript/JavaScript语法",
