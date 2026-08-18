@@ -110,7 +110,9 @@ const processTimeline = async () => {
     }
   }
   if (pathSet.size) {
-    const today = new Date().toISOString().split("T")[0];
+    // 用本地日期（toISOString 是 UTC，东八区凌晨会被算成前一天）
+    const now = new Date();
+    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
     for (const p of pathSet) {
       record.unshift({
         date: today,

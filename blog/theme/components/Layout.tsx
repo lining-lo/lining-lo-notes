@@ -197,6 +197,44 @@ function getAsideSignature(): string {
   return `${anchors.length}|${first}|${last}`;
 }
 
+let mermaidInitialized = false;
+
+// Rspress 1.x 不内置 Mermaid：把 ```mermaid 代码块渲染成图表（客户端执行）
+async function renderMermaidBlocks() {
+  const doc = document.querySelector(".rspress-doc");
+  if (!doc) return;
+  const blocks = Array.from(
+    doc.querySelectorAll<HTMLElement>("pre code.language-mermaid"),
+  );
+  if (!blocks.length) return;
+
+  const mermaid = (await import("mermaid")).default;
+  if (!mermaidInitialized) {
+    mermaid.initialize({
+      startOnLoad: false,
+      securityLevel: "loose", // 允许节点标签里的 HTML（如 <p>__start__</p>）
+      theme: "default",
+    });
+    mermaidInitialized = true;
+  }
+
+  for (const codeEl of blocks) {
+    // <code> 自身也带 language-mermaid 类，必须取外层 <div class="language-mermaid">
+    const wrapper = codeEl.closest<HTMLElement>("div.language-mermaid");
+    if (!wrapper || wrapper.dataset.mermaidRendered === "true") continue;
+    const source = codeEl.textContent || "";
+    try {
+      const id = "mmd-" + Math.random().toString(36).slice(2, 8);
+      const { svg } = await mermaid.render(id, source);
+      wrapper.dataset.mermaidRendered = "true";
+      wrapper.innerHTML = svg;
+    } catch (e) {
+      console.warn("[mermaid] 渲染失败：", e);
+      wrapper.dataset.mermaidRendered = "failed";
+    }
+  }
+}
+
 export function Layout(props: LayoutProps) {
   const { page } = usePageData();
   const { width } = useWindowSize();
@@ -230,6 +268,7 @@ export function Layout(props: LayoutProps) {
       // 文章切换后，先清掉上一篇文章注入的一级标题，再按当前文章重新注入
       cleanupH1Links();
       syncOutline();
+      renderMermaidBlocks();
     };
     const timer = window.setInterval(apply, 300);
     apply();
