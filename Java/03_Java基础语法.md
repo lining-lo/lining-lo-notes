@@ -26,34 +26,21 @@ Java 注释有三种写法：单行注释、多行注释、文档注释。
 完整示例：
 
 ```java
-public class HelloWorld {
-    public static void main(String[] args) {
-
-        System.out.println("HelloWorld");
-
-        System.out.println("HelloWorld");
-    }
-}
-```
-
-在代码中加入注释的写法：
-
-```java
 /**
  * 通过class关键字定义了一个类，类名叫做 HelloWorld
  * public 起到限制作用，限制文件名和类名保持一致
  */
-```
-
-```java
-        // 这是一个单行注释，有效范围是从   // 开始到当前行结尾
-```
-
-```java
-        /*
-              这是一个
-              多行注释
+public class HelloWorld {
+    public static void main(String[] args) {
+		 // 这是一个单行注释，有效范围是从   // 开始到当前行结尾
+        System.out.println("HelloWorld");
+		 /*
+           	这是一个
+           	多行注释
          */
+        System.out.println("HelloWorld");
+    }
+}
 ```
 
 三种注释的书写格式：
