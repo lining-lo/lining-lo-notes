@@ -31,7 +31,8 @@ export const docs = {
     "CSS/CSS语法"
   ],
   "Java": [
-    "Java/01_Java开发环境搭建"
+    "Java/01_Java开发环境搭建",
+    "Java/02_第二章 IDEA开发工具"
   ],
   "JavaScript": [
     "JavaScript/Ajax请求",
