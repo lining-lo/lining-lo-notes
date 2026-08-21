@@ -35,7 +35,8 @@ export const docs = {
     "Java/02_IDEA开发工具",
     "Java/03_Java基础语法",
     "Java/04_运算符",
-    "Java/05_方法"
+    "Java/05_方法",
+    "Java/06_流程控制语句"
   ],
   "JavaScript": [
     "JavaScript/Ajax请求",
