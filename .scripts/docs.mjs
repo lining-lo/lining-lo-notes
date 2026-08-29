@@ -10,6 +10,24 @@ export const docs = {
     "大模型/RAG_系统中Markdown_与_HTML_表格处理",
     "大模型/RAG中文档切割的必要性"
   ],
+  "电商小二": [
+    "电商小二/01_项目概述",
+    "电商小二/02_项目开发准备工作",
+    "电商小二/03_DialogueService实现",
+    "电商小二/04_DialogueState设计与定义",
+    "电商小二/05_DialogueStateRepository实现",
+    "电商小二/06_DialogueEngine设计",
+    "电商小二/07_TaskHandler实现",
+    "电商小二/08_KnowledgeHandler实现",
+    "电商小二/09_ChitchatHandler实现",
+    "电商小二/10_Planning模块实现",
+    "电商小二/11_ClarifyResponder实现",
+    "电商小二/12_DialogueEngine实现",
+    "电商小二/13_FastAPI接口与应用生命周期",
+    "电商小二/附录-面试指南",
+    "电商小二/附录-项目部署",
+    "电商小二/附录-自定义Action实现"
+  ],
   "后端": [
     "后端/Doctor操作",
     "后端/ElasticSearch数据库",
@@ -26,6 +44,39 @@ export const docs = {
     "框架/Vue2框架",
     "框架/Vue3框架",
     "框架/Webpack打包工具"
+  ],
+  "掌柜问数": [
+    "掌柜问数/01_项目全景",
+    "掌柜问数/02_运行项目测试",
+    "掌柜问数/03_项目概述与架构",
+    "掌柜问数/04_项目开发环境",
+    "掌柜问数/05_基础设施搭建",
+    "掌柜问数/06_元数据知识库",
+    "掌柜问数/07_问数智能体",
+    "掌柜问数/08_API接口",
+    "掌柜问数/09_前后端联调"
+  ],
+  "掌柜智库": [
+    "掌柜智库/01_项目全景",
+    "掌柜智库/02_环境配置&服务部署指南",
+    "掌柜智库/03_ 骨架代码与周边模块",
+    "掌柜智库/04_入口节点与PDF转Markdown节点",
+    "掌柜智库/05_图片处理与MinIO上传节点",
+    "掌柜智库/06_文档切分节点",
+    "掌柜智库/07_商品名识别节点 ",
+    "掌柜智库/08_切片向量化节点",
+    "掌柜智库/09_向量数据入库节点",
+    "掌柜智库/10_导入流程与前端对接",
+    "掌柜智库/11_知识库查询骨架代码",
+    "掌柜智库/12_商品名确认节点",
+    "掌柜智库/13_向量检索节点",
+    "掌柜智库/14_HyDE检索节点",
+    "掌柜智库/15_网络搜索节点",
+    "掌柜智库/16_RRF融合节点",
+    "掌柜智库/17_Rerank重排序节点",
+    "掌柜智库/18_答案生成节点",
+    "掌柜智库/19_查询流程与前端对接",
+    "掌柜智库/20_项目总结"
   ],
   "CSS": [
     "CSS/CSS语法"
@@ -49,38 +100,5 @@ export const docs = {
   ],
   "Python": [
     "Python/Python语法"
-  ],
-  "shopkeeper_brain": [
-    "shopkeeper_brain/01_项目全景",
-    "shopkeeper_brain/02_环境配置&服务部署指南",
-    "shopkeeper_brain/03_ 骨架代码与周边模块",
-    "shopkeeper_brain/04_入口节点与PDF转Markdown节点",
-    "shopkeeper_brain/05_图片处理与MinIO上传节点",
-    "shopkeeper_brain/06_文档切分节点",
-    "shopkeeper_brain/07_商品名识别节点 ",
-    "shopkeeper_brain/08_切片向量化节点",
-    "shopkeeper_brain/09_向量数据入库节点",
-    "shopkeeper_brain/10_导入流程与前端对接",
-    "shopkeeper_brain/11_知识库查询骨架代码",
-    "shopkeeper_brain/12_商品名确认节点",
-    "shopkeeper_brain/13_向量检索节点",
-    "shopkeeper_brain/14_HyDE检索节点",
-    "shopkeeper_brain/15_网络搜索节点",
-    "shopkeeper_brain/16_RRF融合节点",
-    "shopkeeper_brain/17_Rerank重排序节点",
-    "shopkeeper_brain/18_答案生成节点",
-    "shopkeeper_brain/19_查询流程与前端对接",
-    "shopkeeper_brain/20_项目总结"
-  ],
-  "shopkeeper-ask-data": [
-    "shopkeeper-ask-data/01_项目全景",
-    "shopkeeper-ask-data/02_运行项目测试",
-    "shopkeeper-ask-data/03_项目概述与架构",
-    "shopkeeper-ask-data/04_项目开发环境",
-    "shopkeeper-ask-data/05_基础设施搭建",
-    "shopkeeper-ask-data/06_元数据知识库",
-    "shopkeeper-ask-data/07_问数智能体",
-    "shopkeeper-ask-data/08_API接口",
-    "shopkeeper-ask-data/09_前后端联调"
   ]
 };

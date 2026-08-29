@@ -9,7 +9,7 @@
 - 使用说明：[USAGE.md](./USAGE.md)
 
 <!-- Summary Start -->
-版本库中共有 `64` 篇文章，总计 `89737` 行，`523270` 字，`1531000` 字符。
+版本库中共有 `80` 篇文章，总计 `100597` 行，`583788` 字，`1737393` 字符。
 <!-- Summary End -->
 
 <!-- Content Start -->
@@ -21,6 +21,24 @@
 * [MinerU文档解析工具](大模型/MinerU文档解析工具.md)
 * [RAG_系统中Markdown_与_HTML_表格处理](大模型/RAG_系统中Markdown_与_HTML_表格处理.md)
 * [RAG中文档切割的必要性](大模型/RAG中文档切割的必要性.md)
+
+## 电商小二
+* [01_项目概述](电商小二/01_项目概述.md)
+* [02_项目开发准备工作](电商小二/02_项目开发准备工作.md)
+* [03_DialogueService实现](电商小二/03_DialogueService实现.md)
+* [04_DialogueState设计与定义](电商小二/04_DialogueState设计与定义.md)
+* [05_DialogueStateRepository实现](电商小二/05_DialogueStateRepository实现.md)
+* [06_DialogueEngine设计](电商小二/06_DialogueEngine设计.md)
+* [07_TaskHandler实现](电商小二/07_TaskHandler实现.md)
+* [08_KnowledgeHandler实现](电商小二/08_KnowledgeHandler实现.md)
+* [09_ChitchatHandler实现](电商小二/09_ChitchatHandler实现.md)
+* [10_Planning模块实现](电商小二/10_Planning模块实现.md)
+* [11_ClarifyResponder实现](电商小二/11_ClarifyResponder实现.md)
+* [12_DialogueEngine实现](电商小二/12_DialogueEngine实现.md)
+* [13_FastAPI接口与应用生命周期](电商小二/13_FastAPI接口与应用生命周期.md)
+* [附录-面试指南](电商小二/附录-面试指南.md)
+* [附录-项目部署](电商小二/附录-项目部署.md)
+* [附录-自定义Action实现](电商小二/附录-自定义Action实现.md)
 
 ## 后端
 * [Doctor操作](后端/Doctor操作.md)
@@ -38,6 +56,39 @@
 * [Vue2框架](框架/Vue2框架.md)
 * [Vue3框架](框架/Vue3框架.md)
 * [Webpack打包工具](框架/Webpack打包工具.md)
+
+## 掌柜问数
+* [01_项目全景](掌柜问数/01_项目全景.md)
+* [02_运行项目测试](掌柜问数/02_运行项目测试.md)
+* [03_项目概述与架构](掌柜问数/03_项目概述与架构.md)
+* [04_项目开发环境](掌柜问数/04_项目开发环境.md)
+* [05_基础设施搭建](掌柜问数/05_基础设施搭建.md)
+* [06_元数据知识库](掌柜问数/06_元数据知识库.md)
+* [07_问数智能体](掌柜问数/07_问数智能体.md)
+* [08_API接口](掌柜问数/08_API接口.md)
+* [09_前后端联调](掌柜问数/09_前后端联调.md)
+
+## 掌柜智库
+* [01_项目全景](掌柜智库/01_项目全景.md)
+* [02_环境配置&服务部署指南](掌柜智库/02_环境配置&服务部署指南.md)
+* [03_ 骨架代码与周边模块](掌柜智库/03_%20骨架代码与周边模块.md)
+* [04_入口节点与PDF转Markdown节点](掌柜智库/04_入口节点与PDF转Markdown节点.md)
+* [05_图片处理与MinIO上传节点](掌柜智库/05_图片处理与MinIO上传节点.md)
+* [06_文档切分节点](掌柜智库/06_文档切分节点.md)
+* [07_商品名识别节点 ](掌柜智库/07_商品名识别节点%20.md)
+* [08_切片向量化节点](掌柜智库/08_切片向量化节点.md)
+* [09_向量数据入库节点](掌柜智库/09_向量数据入库节点.md)
+* [10_导入流程与前端对接](掌柜智库/10_导入流程与前端对接.md)
+* [11_知识库查询骨架代码](掌柜智库/11_知识库查询骨架代码.md)
+* [12_商品名确认节点](掌柜智库/12_商品名确认节点.md)
+* [13_向量检索节点](掌柜智库/13_向量检索节点.md)
+* [14_HyDE检索节点](掌柜智库/14_HyDE检索节点.md)
+* [15_网络搜索节点](掌柜智库/15_网络搜索节点.md)
+* [16_RRF融合节点](掌柜智库/16_RRF融合节点.md)
+* [17_Rerank重排序节点](掌柜智库/17_Rerank重排序节点.md)
+* [18_答案生成节点](掌柜智库/18_答案生成节点.md)
+* [19_查询流程与前端对接](掌柜智库/19_查询流程与前端对接.md)
+* [20_项目总结](掌柜智库/20_项目总结.md)
 
 ## CSS
 * [CSS语法](CSS/CSS语法.md)
@@ -61,38 +112,5 @@
 
 ## Python
 * [Python语法](Python/Python语法.md)
-
-## shopkeeper_brain
-* [01_项目全景](shopkeeper_brain/01_项目全景.md)
-* [02_环境配置&服务部署指南](shopkeeper_brain/02_环境配置&服务部署指南.md)
-* [03_ 骨架代码与周边模块](shopkeeper_brain/03_%20骨架代码与周边模块.md)
-* [04_入口节点与PDF转Markdown节点](shopkeeper_brain/04_入口节点与PDF转Markdown节点.md)
-* [05_图片处理与MinIO上传节点](shopkeeper_brain/05_图片处理与MinIO上传节点.md)
-* [06_文档切分节点](shopkeeper_brain/06_文档切分节点.md)
-* [07_商品名识别节点 ](shopkeeper_brain/07_商品名识别节点%20.md)
-* [08_切片向量化节点](shopkeeper_brain/08_切片向量化节点.md)
-* [09_向量数据入库节点](shopkeeper_brain/09_向量数据入库节点.md)
-* [10_导入流程与前端对接](shopkeeper_brain/10_导入流程与前端对接.md)
-* [11_知识库查询骨架代码](shopkeeper_brain/11_知识库查询骨架代码.md)
-* [12_商品名确认节点](shopkeeper_brain/12_商品名确认节点.md)
-* [13_向量检索节点](shopkeeper_brain/13_向量检索节点.md)
-* [14_HyDE检索节点](shopkeeper_brain/14_HyDE检索节点.md)
-* [15_网络搜索节点](shopkeeper_brain/15_网络搜索节点.md)
-* [16_RRF融合节点](shopkeeper_brain/16_RRF融合节点.md)
-* [17_Rerank重排序节点](shopkeeper_brain/17_Rerank重排序节点.md)
-* [18_答案生成节点](shopkeeper_brain/18_答案生成节点.md)
-* [19_查询流程与前端对接](shopkeeper_brain/19_查询流程与前端对接.md)
-* [20_项目总结](shopkeeper_brain/20_项目总结.md)
-
-## shopkeeper-ask-data
-* [01_项目全景](shopkeeper-ask-data/01_项目全景.md)
-* [02_运行项目测试](shopkeeper-ask-data/02_运行项目测试.md)
-* [03_项目概述与架构](shopkeeper-ask-data/03_项目概述与架构.md)
-* [04_项目开发环境](shopkeeper-ask-data/04_项目开发环境.md)
-* [05_基础设施搭建](shopkeeper-ask-data/05_基础设施搭建.md)
-* [06_元数据知识库](shopkeeper-ask-data/06_元数据知识库.md)
-* [07_问数智能体](shopkeeper-ask-data/07_问数智能体.md)
-* [08_API接口](shopkeeper-ask-data/08_API接口.md)
-* [09_前后端联调](shopkeeper-ask-data/09_前后端联调.md)
 
 <!-- Content End -->
