@@ -6,35 +6,35 @@
 
 ## 1.1 定义 DialogueEngine
 
-在 `atguigu.engine.dialogue_engine.py` 模块中编写导入，并定义 `DialogueEngine`：
+在 `app.engine.dialogue_engine.py` 模块中编写导入，并定义 `DialogueEngine`：
 
 ```python
 import time
 
-from atguigu.chitchat.handler import ChitchatHandler
-from atguigu.clarify.responder import ClarifyResponder
-from atguigu.domain.messages import (
+from app.chitchat.handler import ChitchatHandler
+from app.clarify.responder import ClarifyResponder
+from app.domain.messages import (
     BotMessage,
     MessageType,
     ProcessResult,
     UserMessage,
 )
-from atguigu.domain.state import (
+from app.domain.state import (
     DialogueState,
     FocusedObject,
     Turn,
 )
-from atguigu.knowledge.handler import KnowledgeHandler
-from atguigu.plan.models import ClarifyReason
-from atguigu.plan.turn_planner import TurnPlanner
-from atguigu.plan.validator import TurnPlanValidator
-from atguigu.task.command.models import (
+from app.knowledge.handler import KnowledgeHandler
+from app.plan.models import ClarifyReason
+from app.plan.turn_planner import TurnPlanner
+from app.plan.validator import TurnPlanValidator
+from app.task.command.models import (
     Command,
     SetSlotsCommand,
 )
-from atguigu.task.flow.models import FlowCatalog
-from atguigu.task.flow.steps import CollectSlotStep
-from atguigu.task.handler import TaskHandler
+from app.task.flow.models import FlowCatalog
+from app.task.flow.steps import CollectSlotStep
+from app.task.handler import TaskHandler
 
 
 class DialogueEngine:
@@ -168,7 +168,7 @@ def _prepare_session(
 
 ## 2.2 管理活动 Session
 
-`_prepare_session()` 首先通过 `current_session` 取得当前活动 Session。继续在 `atguigu.domain.state` 模块的 `SharedState` 类中添加：
+`_prepare_session()` 首先通过 `current_session` 取得当前活动 Session。继续在 `app.domain.state` 模块的 `SharedState` 类中添加：
 
 ```python
 @property
@@ -200,7 +200,7 @@ def close_current_session(self) -> None:
 
 `SharedState` 将具体的创建和关闭操作交给 `Session` 自身完成。
 
-首先在 `atguigu.domain.state` 模块中补充导入：
+首先在 `app.domain.state` 模块中补充导入：
 
 ```python
 import time
@@ -229,7 +229,7 @@ def close(self) -> None:
 
 Session 超时后，`_prepare_session()` 会调用 `reset_runtime_state_for_new_session()`，清理只对当前会话有效的运行状态。
 
-继续在 `atguigu.domain.state` 模块的 `DialogueState` 类中添加：
+继续在 `app.domain.state` 模块的 `DialogueState` 类中添加：
 
 ```python
 def reset_runtime_state_for_new_session(self) -> None:
@@ -239,7 +239,7 @@ def reset_runtime_state_for_new_session(self) -> None:
 
 该方法将任务状态和聚焦对象的清理分别交给对应的状态对象。
 
-在 `atguigu.domain.task` 模块的 `TaskState` 类中添加：
+在 `app.domain.task` 模块的 `TaskState` 类中添加：
 
 ```python
 def reset(self) -> None:
@@ -247,7 +247,7 @@ def reset(self) -> None:
     self.paused.clear()
 ```
 
-在 `atguigu.domain.state` 模块的 `SharedState` 类中添加：
+在 `app.domain.state` 模块的 `SharedState` 类中添加：
 
 ```python
 def clear_focus(self) -> None:
@@ -372,7 +372,7 @@ state.shared.set_focused_object(
 
 `attributes` 使用 `dict()` 创建新字典，避免用户消息和对话状态共同持有同一个可变字典。
 
-继续在 `atguigu.domain.state` 模块的 `SharedState` 类中添加：
+继续在 `app.domain.state` 模块的 `SharedState` 类中添加：
 
 ```python
 def set_focused_object(
@@ -532,7 +532,7 @@ def _current_collect_slot_name(
 turn = Turn.create(user_message)
 ```
 
-在 `atguigu.domain.state` 模块的 `Turn` 类中添加：
+在 `app.domain.state` 模块的 `Turn` 类中添加：
 
 ```python
 @classmethod
@@ -555,7 +555,7 @@ turn.bot_messages.extend(messages)
 state.shared.append_turn(turn)
 ```
 
-`extend()` 将本轮产生的全部 `BotMessage` 加入 `turn.bot_messages`。继续在 `atguigu.domain.state` 模块的 `SharedState` 类中添加：
+`extend()` 将本轮产生的全部 `BotMessage` 加入 `turn.bot_messages`。继续在 `app.domain.state` 模块的 `SharedState` 类中添加：
 
 ```python
 def append_turn(self, turn: Turn) -> None:

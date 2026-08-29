@@ -52,12 +52,12 @@ flowchart LR
 
 `ChitchatHandler.handle()` 接收当前对话状态和用户消息。它不直接调用大模型，而是从当前 Session 中取得最近的对话历史，再将历史和当前消息交给 `ChitchatResponder`。
 
-在 `atguigu.chitchat.handler.py` 模块中定义 `ChitchatHandler`：
+在 `app.chitchat.handler.py` 模块中定义 `ChitchatHandler`：
 
 ```python
-from atguigu.chitchat.responder import ChitchatResponder
-from atguigu.domain.messages import BotMessage, UserMessage
-from atguigu.domain.state import DialogueState
+from app.chitchat.responder import ChitchatResponder
+from app.domain.messages import BotMessage, UserMessage
+from app.domain.state import DialogueState
 
 
 class ChitchatHandler:
@@ -100,7 +100,7 @@ class ChitchatHandler:
 
 调用大模型之前，首先需要定义闲聊回复的内容和规则。
 
-在 `atguigu.prompts.jinja2.chitchat_respond.jinja2` 中编写提示词：
+在 `app.prompts.jinja2.chitchat_respond.jinja2` 中编写提示词：
 
 ```jinja2
 你是一个中文电商客服助手，语气自然、友好、简洁。
@@ -109,7 +109,7 @@ class ChitchatHandler:
 
 要求：
 - 如果用户是在打招呼，就自然地回一句中文问候。
-- 如果用户问你是谁或你叫什么，就说明你是"Atguigu 电商助手"。
+- 如果用户问你是谁或你叫什么，就说明你是"app 电商助手"。
 - 如果用户问的是基于最近对话的简单社交问题，也直接自然回答。
 - 不要主动切回业务办理，除非用户明确提出电商诉求。
 
@@ -158,17 +158,17 @@ history = HistoryBuilder.build(recent_turns)
 
 ## 3.3 实现 respond()
 
-提示词及其变量都已经准备完成。`load_prompt()` 已经在前文中实现，这里直接使用它加载闲聊提示词。现在在 `atguigu.chitchat.responder.py` 模块中定义 `ChitchatResponder`：
+提示词及其变量都已经准备完成。`load_prompt()` 已经在前文中实现，这里直接使用它加载闲聊提示词。现在在 `app.chitchat.responder.py` 模块中定义 `ChitchatResponder`：
 
 ```python
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import PromptTemplate
 
-from atguigu.clients.llm import llm
-from atguigu.domain.messages import BotMessage, UserMessage
-from atguigu.domain.state import Turn
-from atguigu.prompts.history_builder import HistoryBuilder
-from atguigu.prompts.prompt_loader import load_prompt
+from app.clients.llm import llm
+from app.domain.messages import BotMessage, UserMessage
+from app.domain.state import Turn
+from app.prompts.history_builder import HistoryBuilder
+from app.prompts.prompt_loader import load_prompt
 
 
 class ChitchatResponder:

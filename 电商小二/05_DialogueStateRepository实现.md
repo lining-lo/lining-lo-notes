@@ -27,7 +27,7 @@ sender_id -> DialogueState
 
 所有的ORM类型都需要继承 SQLAlchemy 的声明式基类 `Base`。
 
-在 `atguigu.models` 包下创建 `base.py` 文件，并编写如下代码：
+在 `app.models` 包下创建 `base.py` 文件，并编写如下代码：
 
 ```python
 from sqlalchemy.orm import DeclarativeBase
@@ -41,13 +41,13 @@ class Base(DeclarativeBase):
 
 `DialogueStateRecord` 表示数据库中的一条对话状态记录。
 
-在 `atguigu.models` 包下创建 `dialogue_state.py` 文件，并编写如下代码：
+在 `app.models` 包下创建 `dialogue_state.py` 文件，并编写如下代码：
 
 ```python
 from sqlalchemy import String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
-from atguigu.models.base import Base
+from app.models.base import Base
 
 
 class DialogueStateRecord(Base):
@@ -85,12 +85,12 @@ Repository 使用 Pydantic 的 `TypeAdapter` 完成 `DialogueState` 与 JSON 之
 
 ### 2.2.1 创建 TypeAdapter
 
-在 `atguigu.repository.dialogue_state_repository` 模块中为 `DialogueState` 创建 `TypeAdapter`：
+在 `app.repository.dialogue_state_repository` 模块中为 `DialogueState` 创建 `TypeAdapter`：
 
 ```python
 from pydantic import TypeAdapter
 
-from atguigu.domain.state import DialogueState
+from app.domain.state import DialogueState
 
 
 DIALOGUE_STATE_ADAPTER = TypeAdapter(DialogueState)
@@ -136,7 +136,7 @@ ORM 类型和类型转换准备完成后，就可以实现 `DialogueStateReposit
 
 ## 3.1 定义 DialogueStateRepository
 
-03 文档已经在 `atguigu.repository.dialogue_state_repository` 模块中定义了 Repository 的方法签名。现在添加所需的导入、类型适配器和构造方法：
+03 文档已经在 `app.repository.dialogue_state_repository` 模块中定义了 Repository 的方法签名。现在添加所需的导入、类型适配器和构造方法：
 
 ```python
 from pydantic import TypeAdapter
@@ -144,8 +144,8 @@ from sqlalchemy import select
 from sqlalchemy.dialects.mysql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from atguigu.domain.state import DialogueState
-from atguigu.models.dialogue_state import DialogueStateRecord
+from app.domain.state import DialogueState
+from app.models.dialogue_state import DialogueStateRecord
 
 
 DIALOGUE_STATE_ADAPTER = TypeAdapter(DialogueState)

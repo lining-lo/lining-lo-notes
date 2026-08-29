@@ -67,14 +67,14 @@ classDiagram
 
 ## 1.3 定义 DialogueState
 
-03 文档已经在 `atguigu.domain.state` 模块中定义了一个空的 `DialogueState`。现在使用以下定义替换它：
+03 文档已经在 `app.domain.state` 模块中定义了一个空的 `DialogueState`。现在使用以下定义替换它：
 
 ```python
 from dataclasses import dataclass, field
 from typing import Any
 
-from atguigu.domain.messages import BotMessage, UserMessage
-from atguigu.domain.task import TaskState
+from app.domain.messages import BotMessage, UserMessage
+from app.domain.task import TaskState
 
 
 @dataclass
@@ -102,7 +102,7 @@ class DialogueState:
 
 `shared` 保存任务型对话、知识检索型对话和闲聊型对话共同使用的状态。
 
-继续在 `atguigu.domain.state` 模块中定义 `SharedState`：
+继续在 `app.domain.state` 模块中定义 `SharedState`：
 
 ```python
 @dataclass
@@ -126,7 +126,7 @@ class SharedState:
 
 `focused_object` 表示用户当前关注的业务对象。例如，用户从页面中选择了一张订单卡片，后续问题通常都与该订单有关。
 
-继续在 `atguigu.domain.state` 模块中定义 `FocusedObject`：
+继续在 `app.domain.state` 模块中定义 `FocusedObject`：
 
 ```python
 @dataclass
@@ -154,7 +154,7 @@ class FocusedObject:
 
 ### 2.3.1 Session
 
-`Session` 表示一段连续的对话。继续在 `atguigu.domain.state` 模块中定义 `Session`：
+`Session` 表示一段连续的对话。继续在 `app.domain.state` 模块中定义 `Session`：
 
 ```python
 @dataclass
@@ -182,7 +182,7 @@ class Session:
 
 `Session.turns` 中的每个元素都是一个 `Turn`。一个 `Turn` 对应一次用户输入以及由这次输入产生的全部客服回复。
 
-继续在 `atguigu.domain.state` 模块中定义 `Turn`：
+继续在 `app.domain.state` 模块中定义 `Turn`：
 
 ```python
 @dataclass
@@ -208,7 +208,7 @@ class Turn:
 
 `tasks` 保存任务型对话独立使用的状态。它只关心当前正在执行的任务，以及已经暂停、后续可以恢复的任务。
 
-在 `atguigu.domain` 包下创建 `task.py` 文件，并添加以下导入：
+在 `app.domain` 包下创建 `task.py` 文件，并添加以下导入：
 
 ```python
 import uuid
@@ -238,7 +238,7 @@ class TaskState:
 
 `active` 和 `paused` 中保存的都是 `TaskInstance`。一个 `TaskInstance` 表示某条任务流程的一次具体执行。
 
-继续在 `atguigu.domain.task` 模块中定义 `TaskInstance`：
+继续在 `app.domain.task` 模块中定义 `TaskInstance`：
 
 ```python
 @dataclass

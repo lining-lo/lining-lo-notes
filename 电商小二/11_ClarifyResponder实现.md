@@ -71,7 +71,7 @@ flowchart LR
 
 基础澄清话术由 `build_clarify_message()` 生成。该方法使用普通条件分支，将每个 `ClarifyReason` 转换为一条含义明确的建议回复。
 
-在 `atguigu.clarify.responder.py` 模块中编写导入，并定义 `ClarifyResponder`：
+在 `app.clarify.responder.py` 模块中编写导入，并定义 `ClarifyResponder`：
 
 ```python
 import json
@@ -80,12 +80,12 @@ from dataclasses import asdict
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import PromptTemplate
 
-from atguigu.clients.llm import llm
-from atguigu.domain.messages import BotMessage, UserMessage
-from atguigu.domain.state import DialogueState
-from atguigu.plan.models import ClarifyReason
-from atguigu.prompts.history_builder import HistoryBuilder
-from atguigu.prompts.prompt_loader import load_prompt
+from app.clients.llm import llm
+from app.domain.messages import BotMessage, UserMessage
+from app.domain.state import DialogueState
+from app.plan.models import ClarifyReason
+from app.prompts.history_builder import HistoryBuilder
+from app.prompts.prompt_loader import load_prompt
 
 
 class ClarifyResponder:
@@ -168,7 +168,7 @@ class ClarifyResponder:
 
 基础话术已经明确了需要表达的内容。接下来定义提示词，让大模型结合上下文调整表达方式。
 
-在 `atguigu.prompts.jinja2.clarify_respond.jinja2` 中编写：
+在 `app.prompts.jinja2.clarify_respond.jinja2` 中编写：
 
 ```jinja2
 你是一个中文电商客服助手，语气自然、友好、简洁。

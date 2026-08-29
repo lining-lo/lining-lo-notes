@@ -203,14 +203,14 @@ classDiagram
 
 ## 2.2 定义 KnowledgeProvider
 
-在 `atguigu.knowledge.providers.py` 模块中定义 `KnowledgeChunk` 和 `KnowledgeProvider`：
+在 `app.knowledge.providers.py` 模块中定义 `KnowledgeChunk` 和 `KnowledgeProvider`：
 
 ```python
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
-from atguigu.domain.messages import UserMessage
-from atguigu.domain.state import DialogueState
+from app.domain.messages import UserMessage
+from app.domain.state import DialogueState
 
 
 @dataclass
@@ -257,14 +257,14 @@ flowchart LR
     class CHUNK result
 ```
 
-继续在 `atguigu.knowledge.providers.py` 模块中补充导入：
+继续在 `app.knowledge.providers.py` 模块中补充导入：
 
 ```python
 import json
 from typing import Any
 
-from atguigu.clients import http_client
-from atguigu.conf.config import settings
+from app.clients import http_client
+from app.conf.config import settings
 ```
 
 然后定义 `ProductAPIProvider`：
@@ -327,7 +327,7 @@ flowchart TD
     class CHUNK result
 ```
 
-继续在 `atguigu.knowledge.providers.py` 模块中补充导入：
+继续在 `app.knowledge.providers.py` 模块中补充导入：
 
 ```python
 import asyncio
@@ -398,7 +398,7 @@ class OrderAPIProvider(KnowledgeProvider):
 
 FAQ 和 RAG 分别表示标准问答库与文档知识库。当前先提供能够参与完整处理流程的基础实现，后续可以在 `retrieve()` 中根据 `user_message` 接入具体的 FAQ 查询或向量检索逻辑。
 
-继续在 `atguigu.knowledge.providers.py` 模块中定义：
+继续在 `app.knowledge.providers.py` 模块中定义：
 
 ```python
 class FAQProvider(KnowledgeProvider):
@@ -447,7 +447,7 @@ class RAGProvider(KnowledgeProvider):
 
 `product_info` 只是一个稳定的意图标识。程序还需要知道它对应商品 API，并且必须具备一个商品对象。这些信息由 `KnowledgeIntent` 统一描述。
 
-在 `atguigu.knowledge.intents.py` 模块中定义 `KnowledgeIntent`：
+在 `app.knowledge.intents.py` 模块中定义 `KnowledgeIntent`：
 
 ```python
 from dataclasses import dataclass, field
@@ -474,7 +474,7 @@ class KnowledgeIntent:
 
 ## 3.2 配置知识意图
 
-继续在 `atguigu.knowledge.intents.py` 模块中定义系统支持的知识意图：
+继续在 `app.knowledge.intents.py` 模块中定义系统支持的知识意图：
 
 ```python
 KNOWLEDGE_INTENTS: dict[str, KnowledgeIntent] = {
@@ -540,10 +540,10 @@ KNOWLEDGE_INTENTS: dict[str, KnowledgeIntent] = {
 Provider ID  ->  KnowledgeProvider 对象
 ```
 
-`KnowledgeProviderRegistry` 负责维护这一映射。在 `atguigu.knowledge.registry.py` 模块中定义：
+`KnowledgeProviderRegistry` 负责维护这一映射。在 `app.knowledge.registry.py` 模块中定义：
 
 ```python
-from atguigu.knowledge.providers import KnowledgeProvider
+from app.knowledge.providers import KnowledgeProvider
 
 
 class KnowledgeProviderRegistry:
@@ -605,7 +605,7 @@ flowchart TD
 
 ## 4.2 定义提示词
 
-在 `atguigu.prompts.jinja2.knowledge_respond.jinja2` 中编写知识回复提示词：
+在 `app.prompts.jinja2.knowledge_respond.jinja2` 中编写知识回复提示词：
 
 ```jinja2
 你是一个中文电商客服助手，语气自然、友好、简洁。
@@ -640,7 +640,7 @@ flowchart TD
 
 提示词保存在单独的 Jinja2 文件中，`KnowledgeResponder` 需要先读取文件内容，再使用 `PromptTemplate` 进行处理。
 
-在 `atguigu.prompts.prompt_loader.py` 模块中定义 `load_prompt()`：
+在 `app.prompts.prompt_loader.py` 模块中定义 `load_prompt()`：
 
 ```python
 from pathlib import Path
@@ -667,18 +667,18 @@ load_prompt("knowledge_respond")
 
 ## 4.4 实现 KnowledgeResponder
 
-在 `atguigu.knowledge.responder.py` 模块中定义 `KnowledgeResponder`：
+在 `app.knowledge.responder.py` 模块中定义 `KnowledgeResponder`：
 
 ```python
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import PromptTemplate
 
-from atguigu.clients.llm import llm
-from atguigu.domain.messages import BotMessage, UserMessage
-from atguigu.domain.state import Turn
-from atguigu.knowledge.providers import KnowledgeChunk
-from atguigu.prompts.history_builder import HistoryBuilder
-from atguigu.prompts.prompt_loader import load_prompt
+from app.clients.llm import llm
+from app.domain.messages import BotMessage, UserMessage
+from app.domain.state import Turn
+from app.knowledge.providers import KnowledgeChunk
+from app.prompts.history_builder import HistoryBuilder
+from app.prompts.prompt_loader import load_prompt
 
 
 class KnowledgeResponder:
@@ -722,18 +722,18 @@ class KnowledgeResponder:
 
 ## 5.1 定义 KnowledgeHandler
 
-在 `atguigu.knowledge.handler.py` 模块中定义 `KnowledgeHandler`，先通过构造函数接收它所需的三个依赖：
+在 `app.knowledge.handler.py` 模块中定义 `KnowledgeHandler`，先通过构造函数接收它所需的三个依赖：
 
 ```python
 import asyncio
 
-from atguigu.domain.messages import BotMessage, UserMessage
-from atguigu.domain.state import DialogueState
-from atguigu.knowledge.intents import KnowledgeIntent
-from atguigu.knowledge.registry import (
+from app.domain.messages import BotMessage, UserMessage
+from app.domain.state import DialogueState
+from app.knowledge.intents import KnowledgeIntent
+from app.knowledge.registry import (
     KnowledgeProviderRegistry,
 )
-from atguigu.knowledge.responder import KnowledgeResponder
+from app.knowledge.responder import KnowledgeResponder
 
 
 class KnowledgeHandler:
