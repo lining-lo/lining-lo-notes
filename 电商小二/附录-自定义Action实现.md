@@ -48,10 +48,10 @@ flowchart LR
 ```python
 from typing import Any
 
-from atguigu.clients import http_client
-from atguigu.conf.config import settings
-from atguigu.domain.state import DialogueState
-from atguigu.task.action.base import Action, ActionResult
+from app.clients import http_client
+from app.conf.config import settings
+from app.domain.state import DialogueState
+from app.task.action.base import Action, ActionResult
 
 
 class LookupOrderStatusAction(Action):
@@ -132,10 +132,10 @@ flowchart LR
 ```python
 from typing import Any
 
-from atguigu.clients import http_client
-from atguigu.conf.config import settings
-from atguigu.domain.state import DialogueState
-from atguigu.task.action.base import Action, ActionResult
+from app.clients import http_client
+from app.conf.config import settings
+from app.domain.state import DialogueState
+from app.task.action.base import Action, ActionResult
 
 
 class LookupLogisticsAction(Action):
@@ -221,10 +221,10 @@ flowchart LR
 ```python
 from typing import Any
 
-from atguigu.clients import http_client
-from atguigu.conf.config import settings
-from atguigu.domain.state import DialogueState
-from atguigu.task.action.base import Action, ActionResult
+from app.clients import http_client
+from app.conf.config import settings
+from app.domain.state import DialogueState
+from app.task.action.base import Action, ActionResult
 
 
 class RecommendSimilarProductsAction(Action):

@@ -527,7 +527,7 @@ classDiagram
 
 `FlowCatalog` 是 Flow 模型的入口，集中保存加载完成的 Flow 和 Slot。
 
-在 `atguigu.task.flow.models.py` 模块中定义 `FlowCatalog`。此处只定义属性：
+在 `app.task.flow.models.py` 模块中定义 `FlowCatalog`。此处只定义属性：
 
 ```python
 from dataclasses import dataclass, field
@@ -545,7 +545,7 @@ class FlowCatalog:
 
 `FlowSlot` 描述 Flow 可以使用的一个业务字段。Slot 由 `FlowCatalog` 统一保存，可以被多个 Flow 引用。
 
-继续在 `atguigu.task.flow.models.py` 模块中定义 `FlowSlot`：
+继续在 `app.task.flow.models.py` 模块中定义 `FlowSlot`：
 
 ```python
 @dataclass
@@ -562,10 +562,10 @@ class FlowSlot:
 
 `Flow` 表示一项完整任务。它保存任务的基本信息，以及任务包含的 Steps 和使用的 Slots。
 
-继续在 `atguigu.task.flow.models.py` 模块中定义 `Flow`：
+继续在 `app.task.flow.models.py` 模块中定义 `Flow`：
 
 ```python
-from atguigu.task.flow.steps import FlowStep
+from app.task.flow.steps import FlowStep
 
 
 @dataclass
@@ -591,12 +591,12 @@ class Flow:
 
 `FlowStep` 表示 Flow 中的一个执行节点。所有 Step 共享 `id`、`type`、`next` 和 `description` 四个属性。
 
-在 `atguigu.task.flow.steps.py` 模块中定义 `FlowStep`：
+在 `app.task.flow.steps.py` 模块中定义 `FlowStep`：
 
 ```python
 from dataclasses import dataclass, field
 
-from atguigu.task.flow.links import FlowStepLink
+from app.task.flow.links import FlowStepLink
 
 
 @dataclass
@@ -609,13 +609,13 @@ class FlowStep:
 
 ##### 2.2.4.1.1 Step 类型
 
-`FlowStepType` 表示配置中的五种 Step 类型。继续在 `atguigu.task.flow.steps.py` 模块中定义枚举和具体 Step：
+`FlowStepType` 表示配置中的五种 Step 类型。继续在 `app.task.flow.steps.py` 模块中定义枚举和具体 Step：
 
 ```python
 from enum import Enum
 from typing import Any
 
-from atguigu.task.response.models import ResponseTemplate
+from app.task.response.models import ResponseTemplate
 
 
 class FlowStepType(Enum):
@@ -658,7 +658,7 @@ class EndFlowStep(FlowStep):
 
 ##### 2.2.4.1.2 Step 连接
 
-`FlowStep.next` 保存当前 Step 的跳转规则。在 `atguigu.task.flow.links.py` 模块中定义三种连接：
+`FlowStep.next` 保存当前 Step 的跳转规则。在 `app.task.flow.links.py` 模块中定义三种连接：
 
 ```python
 from dataclasses import dataclass
@@ -688,7 +688,7 @@ class FallbackLink(FlowStepLink):
 
 ##### 2.2.4.1.3 回复模板与 Slot 校验
 
-`CollectSlotStep` 和 `ResponseFlowStep` 都使用 `ResponseTemplate`。在 `atguigu.task.response.models.py` 模块中定义回复模式和回复模板：
+`CollectSlotStep` 和 `ResponseFlowStep` 都使用 `ResponseTemplate`。在 `app.task.response.models.py` 模块中定义回复模式和回复模板：
 
 ```python
 from dataclasses import dataclass
@@ -716,7 +716,7 @@ class ResponseTemplate:
 | `REPHRASE` | 先渲染 `text`，再由大模型结合上下文改写。 |
 | `GENERATE` | 由大模型根据 `prompt` 和对话上下文生成回复。 |
 
-`CollectSlotStep.validation` 使用 `SlotValidation` 描述 Slot 校验条件和失败回复。继续在 `atguigu.task.flow.steps.py` 模块中定义 `SlotValidation`：
+`CollectSlotStep.validation` 使用 `SlotValidation` 描述 Slot 校验条件和失败回复。继续在 `app.task.flow.steps.py` 模块中定义 `SlotValidation`：
 
 ```python
 @dataclass
@@ -751,15 +751,15 @@ flowchart TD
 
 #### 2.3.1.1 加载入口
 
-在 `atguigu.task.flow.loader.py` 模块中定义 `FlowLoader`，并添加 `load()` 方法：
+在 `app.task.flow.loader.py` 模块中定义 `FlowLoader`，并添加 `load()` 方法：
 
 ```python
 from pathlib import Path
 
 import yaml
 
-from atguigu.task.flow.models import Flow, FlowCatalog, FlowSlot
-from atguigu.task.flow.steps import CollectSlotStep, FlowStep
+from app.task.flow.models import Flow, FlowCatalog, FlowSlot
+from app.task.flow.steps import CollectSlotStep, FlowStep
 
 
 class FlowLoader:
@@ -856,7 +856,7 @@ def _load_flow(
 
 注意：上述代码中`_load_flow()` 对 `steps` 中的每条配置调用 `FlowStep.from_dict()`。
 
-在 `atguigu.task.flow.steps.py` 模块的 `FlowStep` 类中添加该方法：
+在 `app.task.flow.steps.py` 模块的 `FlowStep` 类中添加该方法：
 
 ```python
 @classmethod
@@ -1010,7 +1010,7 @@ def from_dict(
     return cls(**FlowStep.base_fields(step_data))
 ```
 
-`collect` 和 `response` 还需要解析回复模板。在 `atguigu.task.response.models.py` 模块的 `ResponseTemplate` 类中添加 `from_dict()`：
+`collect` 和 `response` 还需要解析回复模板。在 `app.task.response.models.py` 模块的 `ResponseTemplate` 类中添加 `from_dict()`：
 
 ```python
 @classmethod
@@ -1100,7 +1100,7 @@ Planner 只会输出以下四种 Command：
 
 将这四种 Command 分别定义成对应的 Python 模型。
 
-在 `atguigu.task.command.models.py` 模块中定义 Command 模型：
+在 `app.task.command.models.py` 模块中定义 Command 模型：
 
 ```python
 from dataclasses import dataclass
@@ -1189,7 +1189,7 @@ classDiagram
     TaskCanceled --> TaskRef
 ```
 
-在 `atguigu.task.lifecycle.models.py` 模块中定义这些类型：
+在 `app.task.lifecycle.models.py` 模块中定义这些类型：
 
 ```python
 from dataclasses import dataclass
@@ -1235,19 +1235,19 @@ TaskEvent: TypeAlias = (
 
 ### 3.4.1 整体结构
 
-在 `atguigu.task.command.processor.py` 模块中定义 `CommandProcessor`。`run()` 负责依次处理本轮 Commands，`_apply()` 负责根据 Command 类型选择对应的处理分支：
+在 `app.task.command.processor.py` 模块中定义 `CommandProcessor`。`run()` 负责依次处理本轮 Commands，`_apply()` 负责根据 Command 类型选择对应的处理分支：
 
 ```python
-from atguigu.domain.state import DialogueState
-from atguigu.domain.task_lifecycle import TaskEvent
-from atguigu.task.command.models import (
+from app.domain.state import DialogueState
+from app.domain.task_lifecycle import TaskEvent
+from app.task.command.models import (
     CancelTaskCommand,
     Command,
     ResumeTaskCommand,
     SetSlotsCommand,
     StartFlowCommand,
 )
-from atguigu.task.flow.models import FlowCatalog
+from app.task.flow.models import FlowCatalog
 
 
 class CommandProcessor:
@@ -1291,7 +1291,7 @@ class CommandProcessor:
 
 四种 Command 中，`start_flow`、`cancel_task` 和 `resume_task` 会改变任务生命周期并返回 TaskEvent；`set_slots` 只更新任务数据，不产生事件。下面分别说明它们的执行逻辑。
 
-任务状态发生变化时，需要根据 `TaskInstance` 创建 `TaskRef`。在 `atguigu.domain.state.py` 模块的 `TaskInstance` 类中添加 `to_ref()` 方法：
+任务状态发生变化时，需要根据 `TaskInstance` 创建 `TaskRef`。在 `app.domain.state.py` 模块的 `TaskInstance` 类中添加 `to_ref()` 方法：
 
 ```python
 def to_ref(self) -> TaskRef:
@@ -1344,7 +1344,7 @@ flowchart TD
     class STARTED,SWITCHED event
 ```
 
-在 `atguigu.task.flow.models.py` 模块的 `FlowCatalog` 类中添加 `get_flow()`：
+在 `app.task.flow.models.py` 模块的 `FlowCatalog` 类中添加 `get_flow()`：
 
 ```python
 def get_flow(self, flow_id: str) -> Flow:
@@ -1548,18 +1548,18 @@ flowchart LR
 | `TaskResumed` | 提示继续指定任务。 |
 | `TaskCanceled` | 提示指定任务已经取消。 |
 
-在 `atguigu.task.lifecycle.responder.py` 模块中定义 `TaskLifecycleResponder`：
+在 `app.task.lifecycle.responder.py` 模块中定义 `TaskLifecycleResponder`：
 
 ```python
-from atguigu.domain.messages import BotMessage
-from atguigu.domain.task_lifecycle import (
+from app.domain.messages import BotMessage
+from app.domain.task_lifecycle import (
     TaskCanceled,
     TaskEvent,
     TaskResumed,
     TaskStarted,
     TaskSwitched,
 )
-from atguigu.task.flow.models import FlowCatalog
+from app.task.flow.models import FlowCatalog
 
 
 class TaskLifecycleResponder:
@@ -1741,13 +1741,13 @@ flowchart TD
 
 ## 5.2 实现主循环
 
-先在 `atguigu.task.flow.executor.py` 模块中定义 `FlowExecutor`，并添加 `run_task()`。具体代码如下：
+先在 `app.task.flow.executor.py` 模块中定义 `FlowExecutor`，并添加 `run_task()`。具体代码如下：
 
 ```python
-from atguigu.domain.messages import BotMessage, UserMessage
-from atguigu.domain.state import DialogueState
-from atguigu.task.flow.models import FlowCatalog
-from atguigu.task.flow.steps import (
+from app.domain.messages import BotMessage, UserMessage
+from app.domain.state import DialogueState
+from app.task.flow.models import FlowCatalog
+from app.task.flow.steps import (
     ActionFlowStep,
     CollectSlotStep,
     EndFlowStep,
@@ -1797,7 +1797,7 @@ class FlowExecutor:
 
 `messages` 在循环开始前创建，用于保存本轮产生的回复。循环每次重新读取 `state.tasks.active`，再根据活动任务的 `flow_id` 和 `step_id` 取得当前 Step。这样，后续分支修改任务状态后，下一次循环可以读取到最新结果。
 
-在 `atguigu.task.flow.models.py` 模块的 `Flow` 类中添加 `get_step()`，用于根据 step_id 获取FlowStep。
+在 `app.task.flow.models.py` 模块的 `Flow` 类中添加 `get_step()`，用于根据 step_id 获取FlowStep。
 
 ```python
 def get_step(self, step_id: str) -> FlowStep:
@@ -1857,7 +1857,7 @@ def _advance(
 
 其中，条件连接需要判断配置的表达式是否成立。该判断与后面 Slot 校验使用相同的表达式计算逻辑，因此可以定义统一的 `ConditionEvaluator`。它接收条件表达式和计算表达式所需的数据，返回条件是否成立。
 
-在 `atguigu.task.flow.conditions.py` 模块中定义 `ConditionEvaluator`：
+在 `app.task.flow.conditions.py` 模块中定义 `ConditionEvaluator`：
 
 ```python
 from typing import Any
@@ -1993,7 +1993,7 @@ if isinstance(step, ResponseFlowStep):
     continue
 ```
 
-代码中的`response_renderer.render()` 负责将 `ResponseTemplate` 渲染为最终的 `BotMessage`。接下来在 `atguigu.task.response.renderer.py` 模块中定义 `ResponseRenderer`：
+代码中的`response_renderer.render()` 负责将 `ResponseTemplate` 渲染为最终的 `BotMessage`。接下来在 `app.task.response.renderer.py` 模块中定义 `ResponseRenderer`：
 
 ```python
 from typing import Any
@@ -2002,10 +2002,10 @@ from jinja2 import Template
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import PromptTemplate
 
-from atguigu.domain.messages import BotMessage, UserMessage
-from atguigu.domain.state import DialogueState
-from atguigu.prompts.history_builder import HistoryBuilder
-from atguigu.task.response.models import (
+from app.domain.messages import BotMessage, UserMessage
+from app.domain.state import DialogueState
+from app.prompts.history_builder import HistoryBuilder
+from app.task.response.models import (
     ResponseMode,
     ResponseTemplate,
 )
@@ -2094,19 +2094,19 @@ async def _call_llm(
 
 `PromptTemplate.from_template()` 通过 `template_format="jinja2"` 使用 Jinja2 解析提示词。`current_response` 的默认值为空字符串：`REPHRASE` 模式传入待改写的基础回复，`GENERATE` 模式不需要基础回复，因此调用 `_call_llm()` 时可以省略该参数。`ainvoke()` 可以统一接收 `history`、`user_message` 和 `current_response`；提示词中没有使用的变量不会出现在最终提交给大模型的文本中。
 
-`_call_llm()` 使用 `HistoryBuilder` 将会话中的消息转换为提示词需要的文本。在 `atguigu.prompts.history_builder.py` 模块中定义 `HistoryBuilder`：
+`_call_llm()` 使用 `HistoryBuilder` 将会话中的消息转换为提示词需要的文本。在 `app.prompts.history_builder.py` 模块中定义 `HistoryBuilder`：
 
 ```python
 import json
 from dataclasses import asdict
 
-from atguigu.domain.messages import (
+from app.domain.messages import (
     BotMessage,
     MessageObject,
     MessageType,
     UserMessage,
 )
-from atguigu.domain.state import Turn
+from app.domain.state import Turn
 
 
 class HistoryBuilder:
@@ -2290,7 +2290,7 @@ async def _run_collect_step(
 
 `_run_collect_step()` 返回是否需要等待新的用户输入。缺少 Slot 或校验失败时，方法将提示消息加入 `messages` 并返回 `True`，`run_task()` 随即返回这些消息；Slot 有效时，方法调用 `_advance()` 更新任务的 `step_id` 并返回 `False`，主循环继续执行下一个 Step。
 
-为了删除校验失败的 Slot，在 `atguigu.domain.task.py` 模块的 `TaskState` 类中添加 `remove_slot()`：
+为了删除校验失败的 Slot，在 `app.domain.task.py` 模块的 `TaskState` 类中添加 `remove_slot()`：
 
 ```python
 def remove_slot(self, slot_name: str) -> None:
@@ -2386,14 +2386,14 @@ classDiagram
     style RecommendSimilarProductsAction fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
 ```
 
-在 `atguigu.task.action.base.py` 模块中定义 `ActionResult` 和 `Action`：
+在 `app.task.action.base.py` 模块中定义 `ActionResult` 和 `Action`：
 
 ```python
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Any
 
-from atguigu.domain.state import DialogueState
+from app.domain.state import DialogueState
 
 
 @dataclass
@@ -2437,10 +2437,10 @@ class Action(ABC):
 ```python
 from typing import Any
 
-from atguigu.clients.http_client import get_http_client
-from atguigu.conf.config import settings
-from atguigu.domain.state import DialogueState
-from atguigu.task.action.base import Action, ActionResult
+from app.clients.http_client import get_http_client
+from app.conf.config import settings
+from app.domain.state import DialogueState
+from app.task.action.base import Action, ActionResult
 
 
 class LookupOrderStatusAction(Action):
@@ -2475,10 +2475,10 @@ class LookupOrderStatusAction(Action):
 
 #### 5.3.4.3 注册自定义 Action
 
-自定义 Action 编写完成后，还需要让系统知道它的存在，也就是需要向系统注册。`ActionRegistry` 负责注册自定义Action。在 `atguigu.task.action.registry.py` 模块中定义 `ActionRegistry`：
+自定义 Action 编写完成后，还需要让系统知道它的存在，也就是需要向系统注册。`ActionRegistry` 负责注册自定义Action。在 `app.task.action.registry.py` 模块中定义 `ActionRegistry`：
 
 ```python
-from atguigu.task.action.base import Action
+from app.task.action.base import Action
 
 
 class ActionRegistry:
@@ -2504,7 +2504,7 @@ registry.register(LookupLogisticsAction())
 
 但是，这种方式要求每增加一个自定义 Action，都要修改构建代码。
 
-为了让自定义 Action 与组装代码保持独立，项目将它们统一放在 `atguigu.task.action.custom` 包中，并在构建阶段自动完成以下过程：
+为了让自定义 Action 与组装代码保持独立，项目将它们统一放在 `app.task.action.custom` 包中，并在构建阶段自动完成以下过程：
 
 ```mermaid
 flowchart LR
@@ -2524,22 +2524,22 @@ flowchart LR
     class CREATE_REGISTRY,READY component
 ```
 
-在 `atguigu.task.action.builder.py` 模块中定义 `register_custom_actions()`：
+在 `app.task.action.builder.py` 模块中定义 `register_custom_actions()`：
 
 ```python
 import importlib
 import inspect
 import pkgutil
 
-from atguigu.task.action.base import Action
-from atguigu.task.action.registry import ActionRegistry
+from app.task.action.base import Action
+from app.task.action.registry import ActionRegistry
 
 
 def register_custom_actions(
     registry: ActionRegistry,
 ) -> None:
     package = importlib.import_module(
-        "atguigu.task.action.custom"
+        "app.task.action.custom"
     )
 
     for _, module_name, is_package in pkgutil.iter_modules(
@@ -2748,7 +2748,7 @@ flowchart LR
 | `Action` | 一个可以执行的业务操作。 |
 | `ActionCall` | 对某个 Action 发起的一次调用。 |
 
-在 `atguigu.task.action.runner.py` 模块中定义 `ActionCall`：
+在 `app.task.action.runner.py` 模块中定义 `ActionCall`：
 
 ```python
 from dataclasses import dataclass, field
@@ -2768,9 +2768,9 @@ class ActionCall:
 继续在该模块中定义 `ActionRunner`：
 
 ```python
-from atguigu.domain.state import DialogueState
-from atguigu.task.action.base import ActionResult
-from atguigu.task.action.registry import ActionRegistry
+from app.domain.state import DialogueState
+from app.task.action.base import ActionResult
+from app.task.action.registry import ActionRegistry
 
 
 class ActionRunner:
@@ -2801,10 +2801,10 @@ action_call = ActionCall(
 result = await action_runner.run(action_call, state)
 ```
 
-`ActionRunner` 定义完成后，继续在 `atguigu.task.action.builder.py` 模块中补充导入并定义 `build_action_runner()`：
+`ActionRunner` 定义完成后，继续在 `app.task.action.builder.py` 模块中补充导入并定义 `build_action_runner()`：
 
 ```python
-from atguigu.task.action.runner import ActionRunner
+from app.task.action.runner import ActionRunner
 
 
 def build_action_runner() -> ActionRunner:
@@ -2817,7 +2817,7 @@ def build_action_runner() -> ActionRunner:
 
 #### 5.3.4.5 实现action Step处理逻辑
 
-先在 `atguigu.task.flow.executor.py` 模块的 `FlowExecutor` 的构造函数中增加 `action_runner`：
+先在 `app.task.flow.executor.py` 模块的 `FlowExecutor` 的构造函数中增加 `action_runner`：
 
 ```python
 def __init__(
@@ -2873,7 +2873,7 @@ if isinstance(step, EndFlowStep):
 
 `end` Step 调用 `TaskState.complete_active()` 将 `active` 置空，然后立即返回已经累计的 `messages`。暂停任务不受影响，之后仍然可以通过 `resume_task` 恢复。
 
-此时首次需要完成活动任务，因此在 `atguigu.domain.task.py` 模块的 `TaskState` 类中添加 `complete_active()` 方法：
+此时首次需要完成活动任务，因此在 `app.domain.task.py` 模块的 `TaskState` 类中添加 `complete_active()` 方法：
 
 ```python
 def complete_active(self) -> None:
@@ -2884,16 +2884,16 @@ def complete_active(self) -> None:
 
 `CommandProcessor`、`TaskLifecycleResponder` 和 `FlowExecutor` 已经实现完成。`TaskHandler` 将这些组件组织起来，作为任务处理的统一入口。具体处理逻辑如下：
 
-在 `atguigu.task.handler.py` 模块中定义完整的 `TaskHandler`：
+在 `app.task.handler.py` 模块中定义完整的 `TaskHandler`：
 
 ```python
-from atguigu.domain.messages import BotMessage, UserMessage
-from atguigu.domain.state import DialogueState
-from atguigu.task.command.models import Command
-from atguigu.task.command.processor import CommandProcessor
-from atguigu.task.flow.executor import FlowExecutor
-from atguigu.task.flow.models import FlowCatalog
-from atguigu.task.lifecycle.responder import TaskLifecycleResponder
+from app.domain.messages import BotMessage, UserMessage
+from app.domain.state import DialogueState
+from app.task.command.models import Command
+from app.task.command.processor import CommandProcessor
+from app.task.flow.executor import FlowExecutor
+from app.task.flow.models import FlowCatalog
+from app.task.lifecycle.responder import TaskLifecycleResponder
 
 
 class TaskHandler:

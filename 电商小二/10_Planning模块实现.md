@@ -57,7 +57,7 @@ flowchart LR
 
 ## 2.1 实现计划生成入口
 
-在 `atguigu.plan.turn_planner.py` 模块中编写导入，并定义 `TurnPlanner`：
+在 `app.plan.turn_planner.py` 模块中编写导入，并定义 `TurnPlanner`：
 
 ```python
 import json
@@ -67,14 +67,14 @@ from typing import Any
 from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.prompts import PromptTemplate
 
-from atguigu.clients.llm import llm
-from atguigu.domain.messages import UserMessage
-from atguigu.domain.state import DialogueState
-from atguigu.knowledge.intents import KnowledgeIntent
-from atguigu.plan.models import TurnPlan
-from atguigu.prompts.history_builder import HistoryBuilder
-from atguigu.prompts.prompt_loader import load_prompt
-from atguigu.task.flow.models import Flow, FlowCatalog
+from app.clients.llm import llm
+from app.domain.messages import UserMessage
+from app.domain.state import DialogueState
+from app.knowledge.intents import KnowledgeIntent
+from app.plan.models import TurnPlan
+from app.prompts.history_builder import HistoryBuilder
+from app.prompts.prompt_loader import load_prompt
+from app.task.flow.models import Flow, FlowCatalog
 
 
 class TurnPlanner:
@@ -188,12 +188,12 @@ class TurnPlanner:
 
 ### 2.2.2 定义计划模型
 
-在 `atguigu.plan.models.py` 模块中定义与 JSON 结构对应的模型：
+在 `app.plan.models.py` 模块中定义与 JSON 结构对应的模型：
 
 ```python
 from dataclasses import dataclass, field
 
-from atguigu.task.command.models import Command
+from app.task.command.models import Command
 
 
 @dataclass
@@ -271,7 +271,7 @@ class TurnPlan:
 
 `TurnPlanner` 需要告诉大模型可以输出什么计划、系统支持哪些能力，以及当前对话处于什么状态。
 
-在 `atguigu.prompts.jinja2.turn_plan.jinja2` 中编写提示词：
+在 `app.prompts.jinja2.turn_plan.jinja2` 中编写提示词：
 
 ````jinja2
 ## 任务说明
@@ -518,23 +518,23 @@ async def _predict_from_prompt_inputs(
 
 ## 3.1 实现校验入口
 
-在 `atguigu.plan.validator.py` 模块中编写导入，并定义 `TurnPlanValidator`：
+在 `app.plan.validator.py` 模块中编写导入，并定义 `TurnPlanValidator`：
 
 ```python
-from atguigu.domain.state import DialogueState
-from atguigu.knowledge.intents import KnowledgeIntent
-from atguigu.plan.models import (
+from app.domain.state import DialogueState
+from app.knowledge.intents import KnowledgeIntent
+from app.plan.models import (
     ClarifyReason,
     TurnPlan,
     TurnPlanValidationResult,
 )
-from atguigu.task.command.models import (
+from app.task.command.models import (
     CancelTaskCommand,
     ResumeTaskCommand,
     SetSlotsCommand,
     StartFlowCommand,
 )
-from atguigu.task.flow.models import FlowCatalog
+from app.task.flow.models import FlowCatalog
 
 
 class TurnPlanValidator:
@@ -606,7 +606,7 @@ flowchart TD
 
 ## 3.2 定义校验结果
 
-继续在 `atguigu.plan.models.py` 模块中补充导入：
+继续在 `app.plan.models.py` 模块中补充导入：
 
 ```python
 from enum import Enum

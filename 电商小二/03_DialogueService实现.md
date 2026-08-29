@@ -38,14 +38,14 @@ sequenceDiagram
 
 ## 1.3 实现 DialogueService
 
-在 `atguigu.service` 包下创建 `dialogue_service.py` 文件。
+在 `app.service` 包下创建 `dialogue_service.py` 文件。
 
 `DialogueService` 依赖 `DialogueStateRepository` 和 `DialogueEngine`，通过构造方法接收这两个对象，并通过 `process_message()` 组织一条用户消息的处理过程，具体代码如下：
 
 ```python
-from atguigu.domain.messages import ProcessResult, UserMessage
-from atguigu.engine.dialogue_engine import DialogueEngine
-from atguigu.repository.dialogue_state_repository import (
+from app.domain.messages import ProcessResult, UserMessage
+from app.engine.dialogue_engine import DialogueEngine
+from app.repository.dialogue_state_repository import (
     DialogueStateRepository,
 )
 
@@ -116,7 +116,7 @@ class DialogueService:
 
 `DialogueService.process_message()` 接收 `UserMessage`，返回 `ProcessResult`。
 
-在 `atguigu.domain` 包下创建 `messages.py` 文件，具体代码如下：
+在 `app.domain` 包下创建 `messages.py` 文件，具体代码如下：
 
 ### 2.1.1 UserMessage
 
@@ -217,7 +217,7 @@ class BotMessage:
 
 `DialogueService` 只负责在 `DialogueStateRepository` 和 `DialogueEngine` 之间传递对话状态，不会直接读取或修改状态属性。因此，本章暂时不展开 `DialogueState` 的内部结构。
 
-在 `atguigu.domain` 包下创建 `state.py` 文件，并定义 `DialogueState`：
+在 `app.domain` 包下创建 `state.py` 文件，并定义 `DialogueState`：
 
 ```python
 class DialogueState:
@@ -234,11 +234,11 @@ class DialogueState:
 
 本章只定义 `DialogueService` 所需的方法签名，不展开具体的对话处理过程。
 
-在 `atguigu.engine` 包下创建 `dialogue_engine.py` 文件，并编写如下代码：
+在 `app.engine` 包下创建 `dialogue_engine.py` 文件，并编写如下代码：
 
 ```python
-from atguigu.domain.messages import ProcessResult, UserMessage
-from atguigu.domain.state import DialogueState
+from app.domain.messages import ProcessResult, UserMessage
+from app.domain.state import DialogueState
 
 
 class DialogueEngine:
@@ -262,10 +262,10 @@ class DialogueEngine:
 
 本章只定义这两个方法的签名，不涉及数据库和状态序列化。
 
-在 `atguigu.repository` 包下创建 `dialogue_state_repository.py` 文件，并编写如下代码：
+在 `app.repository` 包下创建 `dialogue_state_repository.py` 文件，并编写如下代码：
 
 ```python
-from atguigu.domain.state import DialogueState
+from app.domain.state import DialogueState
 
 
 class DialogueStateRepository:

@@ -72,19 +72,19 @@ flowchart TD
 
 ## 2.2 实现依赖函数
 
-在 `atguigu.api.dependencies.py` 模块中编写：
+在 `app.api.dependencies.py` 模块中编写：
 
 ```python
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from atguigu.clients import database
-from atguigu.engine.builder import build_dialogue_engine
-from atguigu.engine.dialogue_engine import DialogueEngine
-from atguigu.repository.dialogue_state_repository import (
+from app.clients import database
+from app.engine.builder import build_dialogue_engine
+from app.engine.dialogue_engine import DialogueEngine
+from app.repository.dialogue_state_repository import (
     DialogueStateRepository,
 )
-from atguigu.service.dialogue_service import DialogueService
+from app.service.dialogue_service import DialogueService
 
 
 _dialogue_engine: DialogueEngine | None = None
@@ -141,41 +141,41 @@ async with database.session_factory() as session:
 
 `init_dialogue_engine()` 调用了尚未实现的 `build_dialogue_engine()`。下面继续实现该函数，创建 `DialogueEngine` 及其全部依赖，并将前面各篇文档实现的组件组装成一个完整对象。
 
-在 `atguigu.engine.builder.py` 模块中编写：
+在 `app.engine.builder.py` 模块中编写：
 
 ```python
 from pathlib import Path
 
-from atguigu.chitchat.handler import ChitchatHandler
-from atguigu.chitchat.responder import ChitchatResponder
-from atguigu.clarify.responder import ClarifyResponder
-from atguigu.clients.llm import llm
-from atguigu.engine.dialogue_engine import DialogueEngine
-from atguigu.knowledge.handler import KnowledgeHandler
-from atguigu.knowledge.intents import KNOWLEDGE_INTENTS
-from atguigu.knowledge.providers import (
+from app.chitchat.handler import ChitchatHandler
+from app.chitchat.responder import ChitchatResponder
+from app.clarify.responder import ClarifyResponder
+from app.clients.llm import llm
+from app.engine.dialogue_engine import DialogueEngine
+from app.knowledge.handler import KnowledgeHandler
+from app.knowledge.intents import KNOWLEDGE_INTENTS
+from app.knowledge.providers import (
     FAQProvider,
     OrderAPIProvider,
     ProductAPIProvider,
     RAGProvider,
 )
-from atguigu.knowledge.registry import (
+from app.knowledge.registry import (
     KnowledgeProviderRegistry,
 )
-from atguigu.knowledge.responder import KnowledgeResponder
-from atguigu.plan.turn_planner import TurnPlanner
-from atguigu.plan.validator import TurnPlanValidator
-from atguigu.task.action.builder import build_action_runner
-from atguigu.task.command.processor import CommandProcessor
-from atguigu.task.flow.conditions import ConditionEvaluator
-from atguigu.task.flow.executor import FlowExecutor
-from atguigu.task.flow.loader import FlowLoader
-from atguigu.task.flow.steps import ActionFlowStep
-from atguigu.task.handler import TaskHandler
-from atguigu.task.lifecycle.responder import (
+from app.knowledge.responder import KnowledgeResponder
+from app.plan.turn_planner import TurnPlanner
+from app.plan.validator import TurnPlanValidator
+from app.task.action.builder import build_action_runner
+from app.task.command.processor import CommandProcessor
+from app.task.flow.conditions import ConditionEvaluator
+from app.task.flow.executor import FlowExecutor
+from app.task.flow.loader import FlowLoader
+from app.task.flow.steps import ActionFlowStep
+from app.task.handler import TaskHandler
+from app.task.lifecycle.responder import (
     TaskLifecycleResponder,
 )
-from atguigu.task.response.renderer import ResponseRenderer
+from app.task.response.renderer import ResponseRenderer
 
 
 _PACKAGE_ROOT = Path(__file__).parents[1]
@@ -410,20 +410,20 @@ async def history(
 
 ## 4.1 定义应用生命周期
 
-在 `atguigu.api.app.py` 模块中编写：
+在 `app.api.app.py` 模块中编写：
 
 ```python
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from atguigu.api.dependencies import init_dialogue_engine
-from atguigu.api.routers.chat_router import chat_router
-from atguigu.clients.database import (
+from app.api.dependencies import init_dialogue_engine
+from app.api.routers.chat_router import chat_router
+from app.clients.database import (
     close_db_engine,
     init_db_engine,
 )
-from atguigu.clients.http_client import (
+from app.clients.http_client import (
     close_http_client,
     init_http_client,
 )
@@ -449,12 +449,12 @@ app.include_router(chat_router)
 ```python
 import uvicorn
 
-from atguigu.conf.config import settings
+from app.conf.config import settings
 
 
 def main() -> None:
     uvicorn.run(
-        "atguigu.api.app:app",
+        "app.api.app:app",
         host=settings.app_host,
         port=settings.app_port,
         reload=True,
