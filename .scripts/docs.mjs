@@ -4,6 +4,7 @@ export const docs = {
   "大模型": [
     "大模型/大模型相关知识",
     "大模型/低代码平台开发",
+    "大模型/DeepAgents框架",
     "大模型/LangChain框架",
     "大模型/LangGraph框架",
     "大模型/MinerU文档解析工具",
