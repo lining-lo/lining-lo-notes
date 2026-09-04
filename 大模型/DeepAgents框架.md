@@ -1,10 +1,10 @@
-# DeepAgents 框架
+# 一、DeepAgents 框架
 
 ## 1. 开篇引入
 
 在过去短短数年间，人工智能的形态正经历一场层层递进的深刻演化。它从最初仅能 `响应问题` 的大型语言模型（LLM），逐步迭代为具备`调用工具、落地执行` 能力的 AI Agent，如今更朝着`拥有协作意识、可驾驭复杂工作流`的 Agentic AI 加速迈进。这条演进路径绝非简单的功能叠加，而是一条从 `语言理解能力` 到 `自主行动能力`，再到`智能组织与协作能力`的质变之路 —— 几乎构筑起未来智能应用的核心主轴。
 
-![](images/1779249957201.png)
+![](../image/1779249957201.png)
 
 为突破现有技术瓶颈，两个关键概念在研究与实践领域迅速崛起并成为核心驱动力 —— **深度代理（Deep Agents）**与**高阶提示（Higher-Order Prompts, HOPs）**。
 
@@ -55,7 +55,7 @@
 > https://docs.langchain.com/oss/python/concepts/products
 >
 
-![](images/前端与后端的功能概述 (1).png)
+![](../image/前端与后端的功能概述 (1).png)
 
 1. **langchain-core**（核心抽象层 / 基石）
 
@@ -77,7 +77,7 @@
 
 **功能横向对比：**
 
-![](images/前端与后端的功能概述 (2).png)
+![](../image/前端与后端的功能概述 (2).png)
 
 
 
@@ -359,7 +359,7 @@ print(result["messages"][-1].content)
 
    
    
-   ![](images/image-20260531075118154.png)
+   ![](../image/image-20260531075118154.png)
    
    
 
@@ -629,7 +629,7 @@ https://docs.langchain.com/oss/python/deepagents/subagents#configuration
 
 深度代理可以创建子代理来委派工作。你可以在`子代理`参数中指定自定义子代理。子代理用于上下文隔离（保持主代理上下文的干净）以及提供专业指令。
 
-<img src="images/image-20260218202038937.png"  />
+<img src="../image/image-20260218202038937.png"  />
 
 子代理解决了**上下文膨胀问题** 。当代理使用输出较大的工具（如网页搜索、文件读取、数据库查询）时，上下文窗口会迅速被中间结果填满。子代理将这些详细工作隔离开来——主代理只接收最终结果，而非产生该结果的数十个工具调用。
 
@@ -1386,7 +1386,7 @@ https://docs.langchain.com/oss/python/deepagents/human-in-the-loop
 
 有些工具作可能比较敏感，需要人工批准才能执行。深度代理通过 LangGraph 的中断功能支持人机参与的工作流程。您可以使用 `interrupt_on` 参数配置哪些工具需要批准。
 
-<img src="images/image-20260312162445613.png"  />
+<img src="../image/image-20260312162445613.png"  />
 
 ###  8.1. 交互步骤说明
 
@@ -1693,7 +1693,7 @@ https://docs.langchain.com/oss/python/deepagents/backends
 
 ++DeepAgents 的 **Backend** 系统是为 Agent 构建的 “虚拟文件系统”，核心作用是定义 Agent 生成文件的最终存储位置，也是实现跨线程数据共享、落地长期记忆能力的核心载体。
 
-<img src="images/image-20260220001740264.png" alt="image-20260220001740264"  />
+<img src="../image/image-20260220001740264.png" alt="image-20260220001740264"  />
 
 **核心机制：**
 
@@ -2427,7 +2427,7 @@ https://skillsmp.com/zh
 
 - **渐进式披露**：Skills 机制的核心优化策略，用于解决大模型上下文窗口有限的问题。Agent 启动时仅读取所有技能的元数据（轻量信息，占用极少上下文），仅记录 “技能名称、适用场景、触发关键词” 等基础信息；只有当用户任务匹配某一技能的触发条件时，Agent 才会加载该技能的详细指令内容，有效避免无关信息占用上下文，提升任务执行效率。
 
-  ![image-20260312165423918](images/image-20260312165423918.png)
+  ![image-20260312165423918](../image/image-20260312165423918.png)
 
 **标准技能目录结构：**
 
@@ -2658,7 +2658,7 @@ print(f"最终输出结果：{result['messages'][-1].content}")
 2.  **FilesystemBackend**：使用 `FilesystemBackend` 将本地目录挂载到 Agent 的虚拟文件系统中。
 3.  **Skills 路径映射**：`skills=["skills"]` 指读取skill的目录路径。
 
-# 旅游规划多智能体实战
+# 二、旅游规划多智能体实战
 
 这一节我们设计一个**轻量级控制台项目**，目标不是做复杂旅游平台，而是用最少的工程复杂度，把 `DeepAgents + Skill + MCP + 多智能体协作` 这条主线讲清楚。
 
