@@ -205,7 +205,7 @@ uv venv
 uv add deepagents langchain-openai python-dotenv tavily-python
 ```
 
-### 4.2. **步骤2：配置 API Key**
+### 4.2. 步骤2：配置 API Key
 
 确保你拥有 LLM  和 Tavily (搜索) 的 API Key。位置：`.env`
 
@@ -230,7 +230,7 @@ DASHSCOPE_API_KEY=sk-c27d66d7c8eb4be5809b287e6a0b0b80
 TAVILY_API_KEY=tvly-dev-xxxxx
 ```
 
-### 4.3. **步骤3：定义搜索工具**
+### 4.3. 步骤3：定义搜索工具
 
 DeepAgents 需要通过工具与外部世界交互。我们先定义一个简单的联网搜索工具。
 
@@ -276,7 +276,7 @@ if __name__ == "__main__":
     print(internet_search.invoke({"query": "langchain是什么？"}))
 ```
 
-### 4.4. **步骤4：创建 Deep Agent**
+### 4.4. 步骤4：创建 Deep Agent
 
 通过 `create_deep_agent` 工厂函数，将工具和 System Prompt 组装成一个智能体。
 
@@ -302,7 +302,7 @@ deep_agent = create_deep_agent(
 
 ```
 
-### 4.5. **步骤5：运行并获取结果**
+### 4.5. 步骤5：运行并获取结果
 
 ```python
 # 执行深度智能体
