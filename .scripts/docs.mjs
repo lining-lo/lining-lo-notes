@@ -2,6 +2,7 @@
 // 扫描规则：仓库根目录下除 .git/.github/.scripts/blog/images/image/node_modules 外的目录均视为分类，分类下所有 .md 均登记
 export const docs = {
   "大模型": [
+    "大模型/大模型微调",
     "大模型/大模型相关知识",
     "大模型/低代码平台开发",
     "大模型/DeepAgents框架",
