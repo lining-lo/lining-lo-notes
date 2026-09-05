@@ -55,7 +55,7 @@
 > https://docs.langchain.com/oss/python/concepts/products
 >
 
-![](../image/前端与后端的功能概述 (1).png)
+![](../image/前端与后端的功能概述1.png)
 
 1. **langchain-core**（核心抽象层 / 基石）
 
@@ -77,7 +77,7 @@
 
 **功能横向对比：**
 
-![](../image/前端与后端的功能概述 (2).png)
+![](../image/前端与后端的功能概述2.png)
 
 
 
