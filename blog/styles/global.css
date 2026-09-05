@@ -1,0 +1,38 @@
+@import "../node_modules/katex/dist/katex.min.css";
+
+.rspress-doc .header-anchor {
+  float: left;
+  opacity: 0;
+  font-size: inherit;
+  margin-left: -0.8em;
+  transition:
+    color 0.25s,
+    opacity 0.25s;
+}
+
+.rspress-doc h1:hover .header-anchor,
+.rspress-doc h1:focus-within .header-anchor,
+.rspress-doc h2:hover .header-anchor,
+.rspress-doc h2:focus-within .header-anchor,
+.rspress-doc h3:hover .header-anchor,
+.rspress-doc h3:focus-within .header-anchor,
+.rspress-doc h4:hover .header-anchor,
+.rspress-doc h4:focus-within .header-anchor,
+.rspress-doc h5:hover .header-anchor,
+.rspress-doc h5:focus-within .header-anchor,
+.rspress-doc h6:hover .header-anchor,
+.rspress-doc h6:focus-within .header-anchor,
+.rspress-doc .header-anchor:focus {
+  opacity: 1;
+}
+
+.katex-display {
+  margin: 1.25rem 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.1rem 0;
+}
+
+.rspress-doc .katex {
+  font-size: 1.05em;
+}

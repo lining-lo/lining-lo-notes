@@ -144,7 +144,10 @@ function injectH1Links() {
     if (!href || asideMap.has(href)) continue;
 
     const heading = h1Anchor.parentElement as HTMLElement;
-    const text = (heading.textContent || "").replace(/\s*#$/, "").trim();
+    const text = (heading.textContent || "")
+      .replace(/^\s*#\s*/, "")
+      .replace(/\s*#$/, "")
+      .trim();
 
     // 找到目录里已存在的、排在当前 h1 之后的第一个链接，插到它前面
     const anchorIndex = contentAnchors.indexOf(h1Anchor);
