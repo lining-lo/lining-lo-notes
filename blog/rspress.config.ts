@@ -2,6 +2,8 @@ import { defineConfig } from "rspress/config";
 import { sidebar } from "./sidebar";
 import fs from "node:fs";
 import path from "node:path";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
 import { fileURLToPath } from "node:url";
 
 const blogDir = path.dirname(fileURLToPath(import.meta.url));
@@ -43,6 +45,15 @@ export default defineConfig({
   title: "lining-lo 的学习笔记",
   description: "lining-lo 学习笔记博客",
   lang: "zh-cn",
+  markdown: {
+    // mdx-rs 是 Rust 编译路径，不会执行下面的 remark/rehype 插件；
+    // 关闭后走 JS 管线，才能用 remark-math + rehype-katex 渲染 $...$ / $$...$$。
+    mdxRs: false,
+    remarkPlugins: [remarkMath],
+    rehypePlugins: [rehypeKatex],
+  },
+  // KaTeX 插件只生成结构，字体和布局样式需要单独引入。
+  globalStyles: path.join(blogDir, "styles", "global.css"),
   head: [["link", { rel: "apple-touch-icon", href: "/lining-lo-notes/apple-touch-icon.png" }]],
   themeConfig: {
     lastUpdated: true,
