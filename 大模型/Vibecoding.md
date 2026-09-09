@@ -496,15 +496,15 @@ CC Switch 的作用就是统一管理这些 Provider 配置，并帮助 Claude C
 
 
 
-![image-20260602234342467](images\image-20260602234342467.png)
+![image-20260602234342467](../image/image-20260602234342467.png)
 
-![image-20260602234304298](images\image-20260602234304298.png)
+![image-20260602234304298](../image/image-20260602234304298.png)
 
 ### 5.4.3 切换 DeepSeek
 
 在如下位置点击启用即可切换
 
-![](images\image-20260602234536319.png)
+![](../image/image-20260602234536319.png)
 
 
 
