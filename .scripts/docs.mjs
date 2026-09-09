@@ -11,7 +11,8 @@ export const docs = {
     "大模型/MinerU文档解析工具",
     "大模型/RAG_系统中Markdown_与_HTML_表格处理",
     "大模型/RAG项目评估",
-    "大模型/RAG中文档切割的必要性"
+    "大模型/RAG中文档切割的必要性",
+    "大模型/Vibecoding"
   ],
   "电商小二": [
     "电商小二/01_项目全景",
