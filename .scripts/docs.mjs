@@ -88,7 +88,8 @@ export const docs = {
   ],
   "Java": [
     "Java/01_环境和语法",
-    "Java/02_运算符与方法"
+    "Java/02_运算符与方法",
+    "Java/03_流程控制语句"
   ],
   "JavaScript": [
     "JavaScript/Ajax请求",
