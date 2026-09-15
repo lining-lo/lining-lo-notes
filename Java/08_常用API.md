@@ -1319,3 +1319,171 @@ public class Test {
     }
 }
 ```
+
+# 六、Date类
+
+Unix时间原点：格林威治1970‑01‑01 00:00:00
+
+中国东八区是 `1970‑01‑01 08:00:00` 
+
+单位：1秒 = 1000毫秒
+
+## 1.构造方法
+
+| 方法                     | 作用                                     |
+| ------------------------ | ---------------------------------------- |
+| `public Date()`          | 创建对象，代表系统当前时间               |
+| `public Date(long time)` | 根据毫秒值创建时间对象（距离原点的毫秒） |
+
+## 2.常用成员方法
+
+| 方法                      | 作用                 |
+| ------------------------- | -------------------- |
+| `long getTime()`          | 获取时间对应的毫秒值 |
+| `void setTime(long time)` | 设置毫秒值，修改时间 |
+
+> 注意：Date本身格式不好看，旧版用SimpleDateFormat格式化；JDK8推荐使用新时间API，尽量少用Date
+
+```java
+Date d = new Date();
+System.out.println(d);
+long ms = d.getTime();
+ms += 2*60*60*1000; // 往后推2小时
+d.setTime(ms);
+```
+
+------
+
+# 七、JDK8新时间API
+
+> 优点：不可变对象，线程安全，可以精确到纳秒
+
+| 类                  | 含义             |
+| ------------------- | ---------------- |
+| `LocalDate`         | 只有年月日       |
+| `LocalTime`         | 只有时分秒       |
+| `LocalDateTime`     | 年月日时分秒     |
+| `DateTimeFormatter` | 时间格式化、解析 |
+
+## 1. 获取对象
+
+`now()`：获取当前时间
+
+`of(...)`：指定自定义时间
+
+```java
+// 当前
+LocalDate date = LocalDate.now();
+LocalTime time = LocalTime.now();
+LocalDateTime dt = LocalDateTime.now();
+
+// 指定时间：2029‑12‑12 12:12:12
+LocalDateTime dt2 = LocalDateTime.of(2029,12,12,12,12,12);
+```
+
+## 2. 获取时间信息
+
+```java
+LocalDateTime dt = LocalDateTime.now();
+dt.getYear();        //年
+dt.getMonthValue();  //月(1‑12数字)
+dt.getDayOfMonth();  //日
+dt.getHour();        //时
+dt.getMinute();      //分
+dt.getSecond();      //秒
+```
+
+## 3. 修改时间
+
+> 新时间对象不可变！调用方法返回新对象，原对象不变，可以链式调用
+
+`withXXX()`：直接设置：`withYear()`、`withMonth()`、`withDayOfMonth()`…
+
+`plusXXX()`：往后加：`plusYears()`、`plusMonths()`、`plusDays()`、`plusHours()`…
+
+`minusXXX()`：往前减：`minusYears()`、`minusMonths()`、`minusDays()`…
+
+```java
+//链式编程，得到新对象
+LocalDateTime newDt = dt.withYear(2028).withMonth(9).withHour(12);
+LocalDateTime addDt = dt.plusYears(1).plusHours(1);
+LocalDateTime subDt = dt.minusYears(1).minusHours(1);
+```
+
+## 4. 时间比较
+
+`equals()` 是否相等
+
+`isBefore()` 是否在前面
+
+`isAfter()` 是否在后面
+
+## 5. 互相转换
+
+```java
+LocalDate d = dt.toLocalDate(); //转年月日
+LocalTime t = dt.toLocalTime(); //转时分秒
+```
+
+## 6. 格式化&解析
+
+`yyyy`年 `MM`月 `dd`日 `HH`24小时 `mm`分 `ss`秒 示例模式：`yyyy‑MM‑dd HH:mm:ss`
+
+```java
+//1 创建格式化器
+DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy‑MM‑dd HH:mm:ss");
+
+//2 格式化：对象 → 字符串
+String timeStr = dt.format(fmt);
+
+//3 解析：字符串 → LocalDateTime对象
+LocalDateTime parseDt = LocalDateTime.parse("2029‑12‑12 12:12:12",fmt);
+```
+
+# 八、BigDecimal类
+
+作用：解决double浮点数运算精度丢失问题，做精确小数运算 
+
+建议使用 `BigDecimal.valueOf(double)`，不要直接new BigDecimal(double)
+
+核心方法：
+
+| 方法                           | 功能                               |
+| ------------------------------ | ---------------------------------- |
+| `add()`                        | 加法                               |
+| `subtract()`                   | 减法                               |
+| `multiply()`                   | 乘法                               |
+| `divide(bd,保留位数,舍入模式)` | 除法，除不尽必须指定位数和舍入模式 |
+| `setScale(位数,舍入模式)`      | 设置小数位数，做四舍五入           |
+| `doubleValue()`                | 转回double                         |
+
+> 舍入模式常用：`RoundingMode.HALF_UP` 四舍五入
+
+```java
+BigDecimal b1 = BigDecimal.valueOf(0.1);
+BigDecimal b2 = BigDecimal.valueOf(0.3);
+
+//除法，保留3位小数，四舍五入
+double res = b1.divide(b2,3,RoundingMode.HALF_UP).doubleValue();
+
+//四舍五入保留2位
+BigDecimal b = BigDecimal.valueOf(1.235);
+double v = b.setScale(2,RoundingMode.HALF_UP).doubleValue();
+```
+
+------
+
+# 九、Math工具类
+
+> 全部静态方法，类名直接调用，工具类
+
+| 方法                 | 说明          |
+| -------------------- | ------------- |
+| `Math.ceil(double)`  | 向上取整      |
+| `Math.floor(double)` | 向下取整      |
+| `Math.max(a,b)`      | 取最大值      |
+| `Math.min(a,b)`      | 取最小值      |
+| `Math.random()`      | 返回0-1随机数 |
+
+
+

@@ -94,7 +94,8 @@ export const docs = {
     "Java/05_面相对象编程1",
     "Java/06_面相对象编程2",
     "Java/07_面向对象编程3",
-    "Java/08_常用API"
+    "Java/08_常用API",
+    "Java/08_枚举&异常&泛型"
   ],
   "JavaScript": [
     "JavaScript/Ajax请求",
