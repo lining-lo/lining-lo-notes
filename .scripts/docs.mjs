@@ -96,7 +96,8 @@ export const docs = {
     "Java/07_面向对象编程3",
     "Java/08_常用API",
     "Java/09_枚举&异常&泛型",
-    "Java/10_集合的用法1"
+    "Java/10_集合的用法1",
+    "Java/11_集合的用法2"
   ],
   "JavaScript": [
     "JavaScript/Ajax请求",
