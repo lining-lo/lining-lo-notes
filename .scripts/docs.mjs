@@ -99,7 +99,8 @@ export const docs = {
     "Java/10_集合的用法1",
     "Java/11_集合的用法2",
     "Java/12_文件和IO流",
-    "Java/13_多线程知识"
+    "Java/13_多线程知识",
+    "Java/14_网络编程知识"
   ],
   "JavaScript": [
     "JavaScript/Ajax请求",
