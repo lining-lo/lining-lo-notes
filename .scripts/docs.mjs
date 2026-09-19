@@ -37,6 +37,7 @@ export const docs = {
     "后端/ElasticSearch数据库",
     "后端/Git版本控制",
     "后端/Linux操作",
+    "后端/maven依赖管理",
     "后端/Milvus向量检索方式",
     "后端/MongoDB数据库",
     "后端/Mysql数据库",
