@@ -9,7 +9,7 @@
 - 使用说明：[USAGE.md](./USAGE.md)
 
 <!-- Summary Start -->
-版本库中共有 `92` 篇文章，总计 `118754` 行，`715761` 字，`2066392` 字符。
+版本库中共有 `93` 篇文章，总计 `119352` 行，`720768` 字，`2078002` 字符。
 <!-- Summary End -->
 
 <!-- Content Start -->
@@ -49,6 +49,7 @@
 * [ElasticSearch数据库](后端/ElasticSearch数据库.md)
 * [Git版本控制](后端/Git版本控制.md)
 * [Linux操作](后端/Linux操作.md)
+* [maven依赖管理](后端/maven依赖管理.md)
 * [Milvus向量检索方式](后端/Milvus向量检索方式.md)
 * [MongoDB数据库](后端/MongoDB数据库.md)
 * [Mysql数据库](后端/Mysql数据库.md)
