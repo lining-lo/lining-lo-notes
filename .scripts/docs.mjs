@@ -46,6 +46,7 @@ export const docs = {
   "框架": [
     "框架/创建一个脚手架",
     "框架/FastApi框架",
+    "框架/SpringBoot框架",
     "框架/Vue2框架",
     "框架/Vue3框架",
     "框架/Webpack打包工具"
