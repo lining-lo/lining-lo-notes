@@ -9,7 +9,7 @@
 - 使用说明：[USAGE.md](./USAGE.md)
 
 <!-- Summary Start -->
-版本库中共有 `94` 篇文章，总计 `120394` 行，`729006` 字，`2101367` 字符。
+版本库中共有 `95` 篇文章，总计 `121641` 行，`739873` 字，`2132031` 字符。
 <!-- Summary End -->
 
 <!-- Content Start -->
@@ -58,6 +58,7 @@
 ## 框架
 * [创建一个脚手架](框架/创建一个脚手架.md)
 * [FastApi框架](框架/FastApi框架.md)
+* [Mybatis框架](框架/Mybatis框架.md)
 * [SpringBoot框架](框架/SpringBoot框架.md)
 * [Vue2框架](框架/Vue2框架.md)
 * [Vue3框架](框架/Vue3框架.md)
