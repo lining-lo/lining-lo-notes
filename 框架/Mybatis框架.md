@@ -436,7 +436,7 @@ public interface EmployeeMapper {
 
 编写单元测试
 
-```TypeScript
+```java
 @SpringBootTest
 class SpringbootMybatisQuickstartApplicationTests {
     
