@@ -41,6 +41,7 @@ export const docs = {
     "后端/Milvus向量检索方式",
     "后端/MongoDB数据库",
     "后端/Mysql数据库",
+    "后端/Redies数据库",
     "后端/Skill安装与使用"
   ],
   "框架": [
