@@ -94,35 +94,45 @@ function applyAsideHighlight(scrollPaddingTop: number) {
   target.classList.add("aside-active");
 }
 
-// Rspress 默认不把一级标题放进右侧目录，这里把正文里的 h1 补进目录，
+// 目录有两处：桌面端是右侧的 #aside-container，窄屏（<1280px）主题会换成顶栏里的
+// .rspress-local-toc-container 下拉目录。两边都要补一级标题、统一缩进，
+// 否则手机上看到的目录和电脑上不是一套。
+const TOC_ROOTS: { selector: string; linkSelector: string }[] = [
+  { selector: "#aside-container", linkSelector: "nav ul a" },
+  { selector: ".rspress-local-toc-container", linkSelector: "ul a" },
+];
+
+function getTocRoots(): { root: HTMLElement; linkSelector: string }[] {
+  const roots: { root: HTMLElement; linkSelector: string }[] = [];
+  for (const { selector, linkSelector } of TOC_ROOTS) {
+    const root = document.querySelector<HTMLElement>(selector);
+    if (root) roots.push({ root, linkSelector });
+  }
+  return roots;
+}
+
+// Rspress 默认不把一级标题放进目录，这里把正文里的 h1 补进目录，
 // 并按文档顺序插到对应小节（h2 等）的前面
 function cleanupH1Links() {
-  const aside = document.getElementById("aside-container");
-  if (!aside) return;
   // 只清理本脚本注入的一级标题链接，避免上一篇文章的残留
-  aside
-    .querySelectorAll("li[data-aside-h1]")
-    .forEach((li) => li.remove());
+  document.querySelectorAll("li[data-aside-h1]").forEach((li) => li.remove());
 }
 
 // Rspress 原本目录从二级标题开始（二级缩进 0），补上一级标题后，
-// 把二级及以下整体右移 12px，形成「一级 0 / 二级 12 / 三级 24」的层级缩进
-function normalizeAsideIndent() {
-  const aside = document.getElementById("aside-container");
-  if (!aside) return;
-  aside.querySelectorAll("nav ul a").forEach((a) => {
+// 把二级及以下整体右移 12px，形成「一级 0 / 二级 12 / 三级 24」的层级缩进。
+// React 重渲染会把行内 marginLeft 改回原值，所以记住原始值后每次重新算。
+function normalizeTocIndent(root: HTMLElement, linkSelector: string) {
+  root.querySelectorAll<HTMLAnchorElement>(linkSelector).forEach((a) => {
     if (a.closest("li[data-aside-h1]")) return; // 一级标题保持 0
-    if (a.getAttribute("data-aside-indent")) return; // 已调整过，避免重复累加
-    const current = Number.parseFloat(a.style.marginLeft) || 0;
-    a.style.marginLeft = `${current + 12}px`;
-    a.setAttribute("data-aside-indent", "true");
+    const base =
+      a.dataset.tocBaseIndent ?? String(Number.parseFloat(a.style.marginLeft) || 0);
+    a.dataset.tocBaseIndent = base;
+    a.style.marginLeft = `${Number.parseFloat(base) + 12}px`;
   });
 }
 
-function injectH1Links() {
-  const aside = document.getElementById("aside-container");
-  if (!aside) return;
-  const ul = aside.querySelector("nav ul");
+function injectH1Links(root: HTMLElement, linkSelector: string) {
+  const ul = root.querySelector<HTMLAnchorElement>(linkSelector)?.closest("ul");
   if (!ul) return;
   const contentAnchors = Array.from(
     document.querySelectorAll<HTMLAnchorElement>(".rspress-doc .header-anchor"),
@@ -167,16 +177,28 @@ function injectH1Links() {
     const a = document.createElement("a");
     a.href = href;
     a.title = text;
-    a.className =
-      "aside-link transition-all duration-300 hover:text-text-1 text-text-2 block";
+    // 桌面目录和窄屏下拉目录用的是两套类名，注入的条目要跟着当前容器走
+    const isLocalToc = root.classList.contains("rspress-local-toc-container");
+    a.className = isLocalToc
+      ? "rspress-toc-link sm:text-normal text-sm"
+      : "aside-link transition-all duration-300 hover:text-text-1 text-text-2 block";
     a.style.marginLeft = "0px";
-    a.style.fontWeight = "semibold";
+    // "semibold" 不是合法的 CSS 值，会被浏览器丢掉；显式给 500 才能和主题自带条目一致
+    a.style.fontWeight = "500";
     a.addEventListener("click", (e) => {
       e.preventDefault();
       window.location.hash = href.slice(1);
+      // 窄屏目录是顶栏里的下拉框，选完要收起来（桌面端不在这个容器里，取不到就跳过）
+      const menu = root.closest(".rspress-sidebar-menu");
+      const toggle = menu
+        ? Array.from(menu.children)
+            .filter((el) => el.tagName === "BUTTON")
+            .pop()
+        : null;
+      if (toggle instanceof HTMLElement) toggle.click();
     });
     const span = document.createElement("span");
-    span.className = "aside-link-text block";
+    span.className = isLocalToc ? "rspress-toc-link-text block" : "aside-link-text block";
     span.textContent = text;
     a.appendChild(span);
     li.appendChild(a);
@@ -271,8 +293,10 @@ export function Layout(props: LayoutProps) {
   useEffect(() => {
     // 同步右侧目录：先补一级标题链接，再应用滚动高亮
     const syncOutline = () => {
-      injectH1Links();
-      normalizeAsideIndent();
+      for (const { root, linkSelector } of getTocRoots()) {
+        injectH1Links(root, linkSelector);
+        normalizeTocIndent(root, linkSelector);
+      }
       applyAsideHighlight(scrollPaddingTop);
     };
     const onScroll = throttle(syncOutline, 100);
