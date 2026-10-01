@@ -289,6 +289,9 @@ A：在 PowerShell 执行（端口以实际为准）：
 Get-NetTCPConnection -LocalPort 3000 -State Listen | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }
 ```
 
+**Q：手机 / 窄窗口下顶栏为什么只剩一条了？搜索和暗黑切换去哪了？**
+A：`<= 960px` 时主题原本会显示两条：上面「logo + 搜索 + 汉堡」一条，下面「Menu + 目录」一条。现在窄屏会把上面那条整条隐藏，只留下面那条，搜索和暗黑切换由 `blog/theme/components/Layout.tsx` 的 `ensureMobileNavActions()` 复制并注入到这条右侧（点击时转发给主题原本的按钮，所以搜索弹窗、主题偏好都照旧）。想改回两条：删掉 `blog/styles/global.css` 里 `@media (max-width: 960px)` 那一段即可。另外，原来那条里的 GitHub 链接（汉堡菜单内）只随这条一起隐藏，目前窄屏看不到。
+
 ## 8. 写作约定（建议）
 
 - 文件名就是文章入口（浏览器标签页标题、左侧侧边栏都取文件名）；文章里的 `#` 用作章节标题，会进右侧「目录」
