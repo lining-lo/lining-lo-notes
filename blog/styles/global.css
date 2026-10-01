@@ -37,6 +37,26 @@
   font-size: 1.05em;
 }
 
+/* 点目录跳到某个标题时，正文里那个标题闪一下，再在 1.5s 内褪回透明。
+   类由 Layout.tsx 的 flashHeading() 加 1.6s 后摘掉。 */
+@keyframes rp-heading-flash {
+  0%,
+  55% {
+    background-color: var(--rp-c-brand-tint);
+  }
+
+  100% {
+    background-color: transparent;
+  }
+}
+
+.rspress-doc .rp-heading-flash {
+  /* 标题自带 padding-top（h2 是 32px），不裁一下背景会铺成一整块色带 */
+  background-clip: content-box;
+  border-radius: var(--rp-radius-small);
+  animation: rp-heading-flash 1.5s ease-out;
+}
+
 /* 右侧目录（aside）的 sticky 容器。
    Rspress 默认给的是 max-height: calc(100vh - var(--rp-nav-height) + var(--rp-content-padding-y) * 2)，
    而该容器顶部就贴在视口顶部（position: sticky; top: 0），所以它的高度比视口高出
