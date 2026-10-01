@@ -23,6 +23,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # 文章底部的 Last Updated 取「最后一次 git 提交时间」，需要完整历史；
+          # 默认的 depth=1 浅克隆会让所有文章都拿不到自己的提交记录
+          fetch-depth: 0
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
