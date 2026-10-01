@@ -105,9 +105,23 @@ function closeLocalToc() {
 
 // 从实时 DOM 计算当前应高亮的目录项
 function applyAsideHighlight(scrollPaddingTop: number) {
-  const links = Array.from(
+  const anchors = Array.from(
     document.querySelectorAll<HTMLAnchorElement>(".rspress-doc .header-anchor"),
   );
+  if (!anchors.length) return;
+
+  // 正文里有些标题不在目录里（Rspress 的目录只到 h4，这篇里就有几个 h5）。
+  // 判定「当前小节」必须把它们排除，否则会算到目录里根本不存在的条目上：
+  // 高亮被清空（看着像消失），右侧目录也失去目标不再跟着滚，
+  // 得等滚过这一段重新对上一条目录才会「自己跳到位」。
+  const tocHrefs = new Set(
+    Array.from(
+      document.querySelectorAll<HTMLAnchorElement>(
+        "#aside-container a, .rspress-local-toc-container a",
+      ),
+    ).map((item) => item.getAttribute("href")),
+  );
+  const links = anchors.filter((item) => tocHrefs.has(item.getAttribute("href")));
   if (!links.length) return;
 
   const isBottom = () =>
