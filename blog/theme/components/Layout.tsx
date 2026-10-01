@@ -44,6 +44,28 @@ function getTargetTop(element: HTMLElement, scrollPaddingTop: number) {
 
 // 目录里的跳转统一走这里。不能再用浏览器默认锚点行为：hash 没变化时（比如点了小节、
 // 往下翻一段、再点回同一个小节）浏览器不会重新滚动，看起来就是「点了没反应」。
+// 点目录跳到某个标题时，让正文里那个标题自己也闪一下（1.5s 后褪掉）。
+// 长文里跳过去只看到一片正文，不给点提示经常找不到落点是哪个标题。
+let headingFlashTimer: number | undefined;
+let flashedHeading: HTMLElement | null = null;
+
+function flashHeading(heading: HTMLElement) {
+  if (headingFlashTimer) window.clearTimeout(headingFlashTimer);
+  if (flashedHeading && flashedHeading !== heading) {
+    flashedHeading.classList.remove("rp-heading-flash");
+  }
+  // 同一个标题反复点也要能重新播一遍：先摘掉类、强制一次重排，再加回去
+  heading.classList.remove("rp-heading-flash");
+  void heading.offsetWidth;
+  heading.classList.add("rp-heading-flash");
+  flashedHeading = heading;
+  headingFlashTimer = window.setTimeout(() => {
+    heading.classList.remove("rp-heading-flash");
+    if (flashedHeading === heading) flashedHeading = null;
+    headingFlashTimer = undefined;
+  }, 1600);
+}
+
 function scrollToHeading(href: string, scrollPaddingTop: number) {
   let target: HTMLElement | null = null;
   try {
@@ -58,6 +80,7 @@ function scrollToHeading(href: string, scrollPaddingTop: number) {
     top: getTargetTop(target, scrollPaddingTop),
     behavior: "auto",
   });
+  flashHeading(target);
   // 地址栏跟着走，但不写 location.hash —— 那样又会触发一次浏览器默认跳转。
   // location.hash 是编码过的，比较前先解码，避免每次点击都往历史里塞一条。
   let current = window.location.hash;
