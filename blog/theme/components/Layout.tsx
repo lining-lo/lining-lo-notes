@@ -42,8 +42,32 @@ function getTargetTop(element: HTMLElement, scrollPaddingTop: number) {
   );
 }
 
-// 目录里的跳转统一走这里。不能再用浏览器默认锚点行为：hash 没变化时（比如点了小节、
-// 往下翻一段、再点回同一个小节）浏览器不会重新滚动，看起来就是「点了没反应」。
+// 窄屏那个下拉目录展开时把正文滚动锁住：不锁的话手指在正文上一划，正文跟着走，
+// 顶上还挂着目录面板，看着很乱（主题的左侧抽屉也是这么锁的）。
+// 锁的是 <html>，同时补一条滚动条宽度的 padding，免得桌面窄窗口下整页横向跳一下。
+let pageLockSavedPadding = "";
+let pageLockSavedScrollY = 0;
+
+function setPageScrollLock(lock: boolean) {
+  const root = document.documentElement;
+  if (lock === root.classList.contains("rp-page-lock")) return;
+  if (lock) {
+    pageLockSavedScrollY = window.scrollY;
+    const scrollbarGap = window.innerWidth - root.clientWidth;
+    pageLockSavedPadding = root.style.paddingRight;
+    if (scrollbarGap > 0) root.style.paddingRight = `${scrollbarGap}px`;
+    root.classList.add("rp-page-lock");
+    return;
+  }
+  root.classList.remove("rp-page-lock");
+  root.style.paddingRight = pageLockSavedPadding;
+  pageLockSavedPadding = "";
+  // 个别浏览器在 overflow 从 hidden 恢复后会把滚动位置拉回 0，这里兜一下
+  if (Math.abs(window.scrollY - pageLockSavedScrollY) > 1) {
+    window.scrollTo(0, pageLockSavedScrollY);
+  }
+}
+
 // 点目录跳到某个标题时，让正文里那个标题自己也闪一下（1.5s 后褪掉）。
 // 长文里跳过去只看到一片正文，不给点提示经常找不到落点是哪个标题。
 let headingFlashTimer: number | undefined;
@@ -66,6 +90,8 @@ function flashHeading(heading: HTMLElement) {
   }, 1600);
 }
 
+// 目录里的跳转统一走这里。不能再用浏览器默认锚点行为：hash 没变化时（比如点了小节、
+// 往下翻一段、再点回同一个小节）浏览器不会重新滚动，看起来就是「点了没反应」。
 function scrollToHeading(href: string, scrollPaddingTop: number) {
   let target: HTMLElement | null = null;
   try {
@@ -501,9 +527,11 @@ export function Layout(props: LayoutProps) {
       if (!TOC_ROOTS.some(({ selector }) => link.closest(selector))) return;
 
       event.preventDefault();
+      // 窄屏下拉目录开着时正文是锁着的，先解锁再跳 —— 否则 scrollTo 会被 overflow:hidden 吃掉
+      const localToc = link.closest(".rspress-local-toc-container");
+      if (localToc) setPageScrollLock(false);
       scrollToHeading(href, scrollPaddingTop);
       // 窄屏那个下拉目录选完收起来（主题渲染的条目自己有 onClick，注入的没有）
-      const localToc = link.closest(".rspress-local-toc-container");
       if (localToc?.classList.contains("rspress-local-toc-container-show")) {
         closeLocalToc();
       }
@@ -530,6 +558,8 @@ export function Layout(props: LayoutProps) {
             linkRect.top - rootRect.top - localToc.clientHeight / 2 + linkRect.height / 2;
         }
       }
+      // 展开时锁住正文滚动，收起时解锁
+      setPageScrollLock(isOpen);
       localTocOpened = isOpen;
     };
     let lastSignature = "";
