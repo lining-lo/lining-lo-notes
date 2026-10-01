@@ -5,29 +5,68 @@ import path from "node:path";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import { fileURLToPath } from "node:url";
+import { execFileSync } from "node:child_process";
 import { collectFenceLanguages, highlightLanguageAliases, remarkNormalizeCodeLang } from "./highlight-languages";
 
 const blogDir = path.dirname(fileURLToPath(import.meta.url));
-const docsDir = path.join(blogDir, "docs");
 const repoRoot = path.resolve(blogDir, "..");
 
-// 博客源文件在 blog/docs/ 下（由脚本生成、不入库），git 拿不到更新时间，
-// 这里映射回仓库根目录的源文章，用文件修改时间作为 Last Updated
+// 文章底部的 "Last Updated"：按「该文件的最后一次 git 提交时间」算。
+// 不能用文件 mtime —— CI 每次都是全新 clone（所有文件 mtime 都等于 checkout 那一刻），
+// 本地 blog/docs 又是 sync-site.mjs 一次性生成的，同样会得到同一个时间。
+let lastCommitTimes: Map<string, string> | null = null;
+function loadLastCommitTimes(): Map<string, string> {
+  if (lastCommitTimes) return lastCommitTimes;
+  const map = new Map<string, string>();
+  try {
+    // 一次拿到所有文件的最后提交时间：日志从新到旧，某个路径第一次出现即为最后一次修改
+    const out = execFileSync(
+      "git",
+      ["-c", "core.quotepath=false", "log", "--format=@@date %cI", "--name-only"],
+      {
+        cwd: repoRoot,
+        encoding: "utf8",
+        maxBuffer: 64 * 1024 * 1024,
+        stdio: ["ignore", "pipe", "ignore"],
+      },
+    );
+    let current = "";
+    for (const line of out.split(/\r?\n/)) {
+      const text = line.trim();
+      if (text.startsWith("@@date ")) {
+        current = text.slice("@@date ".length);
+      } else if (text && current && !map.has(text)) {
+        map.set(text, current);
+      }
+    }
+  } catch {
+    // 没有 git（或不是仓库）时退回文件 mtime
+  }
+  lastCommitTimes = map;
+  return map;
+}
+
 const lastUpdatedPlugin = {
   name: "local-last-updated",
-  extendPageData(pageData: { _filepath?: string; lang?: string }) {
-    const abs = pageData._filepath;
-    if (!abs) return;
-    let src = abs;
-    if (abs.startsWith(docsDir)) {
-      const rel = path.relative(docsDir, abs);
-      const mapped = path.join(repoRoot, rel);
-      if (fs.existsSync(mapped)) src = mapped;
+  extendPageData(pageData: { _filepath?: string; _relativePath?: string; lang?: string }) {
+    // _relativePath 是相对 docs 根目录的路径（如 Java/08_常用API.md），
+    // 正好对应仓库根目录里的源文章，不用再猜 blog/docs 的绝对路径
+    const rel = (pageData._relativePath || "").replace(/\\/g, "/");
+    const iso = rel ? loadLastCommitTimes().get(rel) : undefined;
+    let date = iso ? new Date(iso) : null;
+    if (!date || Number.isNaN(date.getTime())) {
+      // 未提交的新文章 / 生成的 index.md：退回文件 mtime
+      for (const candidate of [rel ? path.join(repoRoot, rel) : "", pageData._filepath]) {
+        if (!candidate) continue;
+        try {
+          date = fs.statSync(candidate).mtime;
+          break;
+        } catch {}
+      }
     }
-    try {
-      const stat = fs.statSync(src);
-      pageData.lastUpdatedTime = new Date(stat.mtime).toLocaleString(pageData.lang || "zh-CN");
-    } catch {}
+    if (date) {
+      pageData.lastUpdatedTime = date.toLocaleString(pageData.lang || "zh-CN");
+    }
   },
 };
 
