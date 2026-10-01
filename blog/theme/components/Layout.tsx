@@ -200,6 +200,23 @@ function getAsideSignature(): string {
   return `${anchors.length}|${first}|${last}`;
 }
 
+// 目录比可视区高时，滚轮在目录里滚到头后不要继续带着正文一起滚（overscroll 链）；
+// 目录本来就放得下时不接管滚动，否则右侧侧边栏会变成滚轮死区。
+function syncAsideOverscroll() {
+  const aside = document.getElementById("aside-container");
+  let container = aside?.parentElement ?? null;
+  while (container && container !== document.body) {
+    const overflowY = window.getComputedStyle(container).overflowY;
+    if (overflowY === "auto" || overflowY === "scroll" || overflowY === "overlay") break;
+    container = container.parentElement;
+  }
+  if (!container || container === document.body) return;
+  const next = container.scrollHeight > container.clientHeight + 1 ? "contain" : "";
+  if (container.style.overscrollBehaviorY !== next) {
+    container.style.overscrollBehaviorY = next;
+  }
+}
+
 let mermaidInitialized = false;
 
 // Rspress 1.x 不内置 Mermaid：把 ```mermaid 代码块渲染成图表（客户端执行）
@@ -265,6 +282,7 @@ export function Layout(props: LayoutProps) {
     // 轮询检测正文锚点变化，正文真正渲染后再应用高亮。
     let lastSignature = "";
     const apply = () => {
+      syncAsideOverscroll();
       const signature = getAsideSignature();
       if (signature === lastSignature) return;
       lastSignature = signature;
