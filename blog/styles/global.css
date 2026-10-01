@@ -36,3 +36,13 @@
 .rspress-doc .katex {
   font-size: 1.05em;
 }
+
+/* 右侧目录（aside）的 sticky 容器。
+   Rspress 默认给的是 max-height: calc(100vh - var(--rp-nav-height) + var(--rp-content-padding-y) * 2)，
+   而该容器顶部就贴在视口顶部（position: sticky; top: 0），所以它的高度比视口高出
+   (2 * padding-y - nav-height) ≈ 24px。结果是目录滚到底时最后一个标题仍被压在视口外，
+   只有正文滚到最低端、容器被父元素顶上去时才看得见。
+   这里按实际可见高度收紧到 100vh（用 class 前缀选择器，避免依赖 CSS Module 的 hash）。 */
+div[class*="aside-container_"] {
+  max-height: 100vh;
+}

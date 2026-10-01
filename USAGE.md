@@ -298,3 +298,10 @@ Get-NetTCPConnection -LocalPort 3000 -State Listen | ForEach-Object { Stop-Proce
 - 算法题建议记录：思路、复杂度分析、至少一种实现
 - 图片用相对路径（`./`、`./images/`、`../image/`、`../images/`），别用绝对路径（`/xxx.png`）或本机路径（`C:\...`）
 - 随笔不求体系完整，贵在真实与持续 
+
+### 代码块语言与高亮
+
+- 语言标记**不区分大小写**，`Java`、`JAVA`、`java` 效果一样
+- 构建时会自动扫描文章里出现过的语言并注册 Prism 语法，绝大多数语言直接写即可
+- 部分常见写法会自动映射到 Prism 的规范语法：`sh`/`shell`/`zsh`/`console` → `bash`，`mysql`/`postgres`/`pgsql` → `sql`，`html`/`xml`/`vue`/`svg` → `markup`，`c++` → `cpp`，`c#`/`cs` → `csharp`，`cmd`/`bat` → `batch`，`yml` → `yaml`，`tex` → `latex`，`jinja2` → `django`，`dockerfile` → `docker`，`terraform`/`tf` → `hcl`，`proto` → `protobuf`
+- 完整别名表见 `blog/highlight-languages.ts`，需要新增写法时在那里补一行 `[别名, Prism 规范名]`
