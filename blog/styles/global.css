@@ -98,6 +98,17 @@ div[class*="aside-container_"] {
   background-color: var(--rp-c-brand-tint);
 }
 
+/* 窄屏下拉目录展开时把正文滚动锁住（类由 Layout.tsx 的 setPageScrollLock 维护）。
+   不锁的话手指在正文上一划正文就跟着走，顶上还挂着目录面板，看着很乱。 */
+html.rp-page-lock {
+  overflow: hidden;
+}
+
+/* 目录面板自己滚到底后，不要把滚动链带给正文 */
+.rspress-local-toc-container {
+  overscroll-behavior: contain;
+}
+
 /* 窄屏（<=960px，主题切到移动端导航的那一档）：顶部第一条（logo / 搜索 / 汉堡 那条）
    整条去掉，只留下面「Menu / 目录」这一条；搜索和暗黑切换由 Layout 注入到这一条右侧。 */
 @media (max-width: 960px) {
