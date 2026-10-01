@@ -5,6 +5,7 @@ import path from "node:path";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import { fileURLToPath } from "node:url";
+import { collectFenceLanguages, highlightLanguageAliases, remarkNormalizeCodeLang } from "./highlight-languages";
 
 const blogDir = path.dirname(fileURLToPath(import.meta.url));
 const docsDir = path.join(blogDir, "docs");
@@ -30,6 +31,31 @@ const lastUpdatedPlugin = {
   },
 };
 
+// Rspress 只会把「文章里原样出现过的语言名」注册进 Prism，而且大小写敏感。
+// 这里构建时扫一遍文章，把真实用到的语言（统一小写）补进 extraHighlightLanguages，
+// 这样 ```Java 这类写法也能拿到对应语法包。
+const extraHighlightLanguages: string[] = [];
+const collectedLanguages = new Set<string>();
+const highlightLanguagesPlugin = {
+  name: "highlight-languages",
+  extendPageData(pageData: { _filepath?: string; extraHighlightLanguages?: string[] }) {
+    // Rspress 只读取 siteData.pages[0].extraHighlightLanguages，所以每页挂同一个数组引用
+    pageData.extraHighlightLanguages = extraHighlightLanguages;
+    if (!pageData._filepath) return;
+    let content: string;
+    try {
+      content = fs.readFileSync(pageData._filepath, "utf8");
+    } catch {
+      return;
+    }
+    for (const lang of collectFenceLanguages(content)) {
+      if (collectedLanguages.has(lang)) continue;
+      collectedLanguages.add(lang);
+      extraHighlightLanguages.push(lang);
+    }
+  },
+};
+
 export default defineConfig({
   root: "docs",
   outDir: "site-dev",
@@ -41,7 +67,7 @@ export default defineConfig({
   route: {
     include: ["docs/**/*.md"],
   },
-  plugins: [lastUpdatedPlugin],
+  plugins: [lastUpdatedPlugin, highlightLanguagesPlugin],
   title: "lining-lo 的学习笔记",
   description: "lining-lo 学习笔记博客",
   lang: "zh-cn",
@@ -49,7 +75,9 @@ export default defineConfig({
     // mdx-rs 是 Rust 编译路径，不会执行下面的 remark/rehype 插件；
     // 关闭后走 JS 管线，才能用 remark-math + rehype-katex 渲染 $...$ / $$...$$。
     mdxRs: false,
-    remarkPlugins: [remarkMath],
+    // 语言别名 + 围栏语言统一转小写，见 highlight-languages.ts
+    highlightLanguages: highlightLanguageAliases,
+    remarkPlugins: [remarkNormalizeCodeLang, remarkMath],
     rehypePlugins: [rehypeKatex],
   },
   // KaTeX 插件只生成结构，字体和布局样式需要单独引入。
