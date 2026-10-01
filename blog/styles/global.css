@@ -120,10 +120,42 @@ div[class*="aside-container_"] {
 .rp-mobile-nav-actions {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 0 4px;
+  gap: 8px;
 }
 
-.rp-mobile-nav-actions > * {
+/* 搜索 / 暗黑切换用同一种「28px 描边小方块 + 18px 图标」。
+   原先一个是裸图标、一个是描边方块，并排看着不齐。
+   方块之间 8px；跟「目录」按钮之间不再另加 padding，
+   靠目录按钮自己的 12px 内边距留白，视觉间距才是匀的。 */
+.rp-mobile-nav-actions > .rp-mobile-nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--rp-c-divider);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--rp-c-text-3);
   cursor: pointer;
+  transition:
+    color 0.3s,
+    border-color 0.3s;
+}
+
+.rp-mobile-nav-actions > .rp-mobile-nav-icon:hover {
+  color: var(--rp-c-text-1);
+  border-color: var(--rp-c-text-3);
+}
+
+.rp-mobile-nav-actions > .rp-mobile-nav-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* 搜索图标内部写死了 var(--rp-c-gray)，这里统一跟着按钮的 color 走 */
+.rp-mobile-nav-actions > .rp-mobile-nav-icon svg path {
+  fill: currentColor;
 }

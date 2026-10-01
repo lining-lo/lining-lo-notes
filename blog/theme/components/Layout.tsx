@@ -318,23 +318,26 @@ function ensureMobileNavActions() {
   actions.dataset.rpMobileActions = "true";
   actions.className = "rp-mobile-nav-actions";
 
-  const searchButton = searchSource.cloneNode(true) as HTMLElement;
-  searchButton.setAttribute("role", "button");
-  searchButton.setAttribute("aria-label", "搜索");
-  searchButton.title = "搜索";
-  searchButton.addEventListener("click", () =>
-    findLiveControl(SEARCH_CONTROL_SELECTORS)?.click(),
+  // 两个按钮统一成同一种「28px 描边小方块 + 18px 图标」，
+  // 只把主题自己的 <svg> 复制过来（暗黑那对 svg 带 dark:hidden / hidden dark:block，会自动换图标）
+  const toIconButton = (source: HTMLElement, label: string, targets: string[]) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "rp-mobile-nav-icon";
+    button.setAttribute("aria-label", label);
+    button.title = label;
+    source.querySelectorAll("svg").forEach((svg) => {
+      button.appendChild(svg.cloneNode(true));
+    });
+    button.addEventListener("click", () => findLiveControl(targets)?.click());
+    return button;
+  };
+
+  actions.append(
+    toIconButton(searchSource, "搜索", SEARCH_CONTROL_SELECTORS),
+    toIconButton(appearanceSource, "切换主题", APPEARANCE_CONTROL_SELECTORS),
   );
 
-  const appearanceButton = appearanceSource.cloneNode(true) as HTMLElement;
-  appearanceButton.setAttribute("role", "button");
-  appearanceButton.setAttribute("aria-label", "切换主题");
-  appearanceButton.title = "切换主题";
-  appearanceButton.addEventListener("click", () =>
-    findLiveControl(APPEARANCE_CONTROL_SELECTORS)?.click(),
-  );
-
-  actions.append(searchButton, appearanceButton);
   // 插到「目录」按钮前面，这样右侧的排布是 [搜索][暗黑切换][目录]
   const tocButton = menu.querySelector<HTMLElement>(":scope > button.ml-auto");
   if (tocButton) menu.insertBefore(actions, tocButton);
