@@ -44,8 +44,6 @@ function getTargetTop(element: HTMLElement, scrollPaddingTop: number) {
 
 // 从实时 DOM 计算当前应高亮的目录项
 function applyAsideHighlight(scrollPaddingTop: number) {
-  const aside = document.getElementById("aside-container");
-  if (!aside) return;
   const links = Array.from(
     document.querySelectorAll<HTMLAnchorElement>(".rspress-doc .header-anchor"),
   );
@@ -85,13 +83,18 @@ function applyAsideHighlight(scrollPaddingTop: number) {
     }
   }
 
-  aside
-    .querySelectorAll(".aside-active")
-    .forEach((el) => el.classList.remove("aside-active"));
-  const href = links[activeIndex].getAttribute("href");
-  const target = aside.querySelector(`a[href="#${href?.slice(1)}"]`);
-  if (!target) return;
-  target.classList.add("aside-active");
+  const id = links[activeIndex].getAttribute("href")?.slice(1) ?? "";
+  if (!id) return;
+
+  // 桌面端：右侧目录沿用主题自带的 .aside-active 样式
+  const aside = document.getElementById("aside-container");
+  aside?.querySelectorAll(".aside-active").forEach((el) => el.classList.remove("aside-active"));
+  aside?.querySelector(`a[href="#${id}"]`)?.classList.add("aside-active");
+
+  // 窄屏：顶栏里的下拉目录主题不做高亮，这里单独标 toc-active（样式在 global.css）
+  const localToc = document.querySelector<HTMLElement>(".rspress-local-toc-container");
+  localToc?.querySelectorAll(".toc-active").forEach((el) => el.classList.remove("toc-active"));
+  localToc?.querySelector(`a[href="#${id}"]`)?.classList.add("toc-active");
 }
 
 // 目录有两处：桌面端是右侧的 #aside-container，窄屏（<1280px）主题会换成顶栏里的
@@ -304,9 +307,30 @@ export function Layout(props: LayoutProps) {
 
     // 路由数据与正文渲染是异步的（先更新页面数据、后渲染文章内容），
     // 轮询检测正文锚点变化，正文真正渲染后再应用高亮。
+    // 窄屏下拉目录展开时，把当前小节滚到可见位置，否则高亮在列表下面根本看不到
+    let localTocOpened = false;
+    const syncLocalTocVisibility = () => {
+      const localToc = document.querySelector<HTMLElement>(
+        ".rspress-local-toc-container",
+      );
+      if (!localToc) return;
+      const isOpen = localToc.classList.contains("rspress-local-toc-container-show");
+      if (isOpen && !localTocOpened) {
+        applyAsideHighlight(scrollPaddingTop);
+        const active = localToc.querySelector<HTMLElement>("a.toc-active");
+        if (active) {
+          const rootRect = localToc.getBoundingClientRect();
+          const linkRect = active.getBoundingClientRect();
+          localToc.scrollTop +=
+            linkRect.top - rootRect.top - localToc.clientHeight / 2 + linkRect.height / 2;
+        }
+      }
+      localTocOpened = isOpen;
+    };
     let lastSignature = "";
     const apply = () => {
       syncAsideOverscroll();
+      syncLocalTocVisibility();
       const signature = getAsideSignature();
       if (signature === lastSignature) return;
       lastSignature = signature;
