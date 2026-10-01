@@ -46,3 +46,10 @@
 div[class*="aside-container_"] {
   max-height: 100vh;
 }
+
+/* 窄屏（<1280px）顶栏下拉目录里「当前小节」的高亮：
+   主题只给桌面目录做了 .aside-active，下拉这版没有，这里补上 */
+.rspress-local-toc-container a.toc-active .rspress-toc-link-text {
+  color: var(--rp-c-link);
+  background-color: var(--rp-c-brand-tint);
+}
