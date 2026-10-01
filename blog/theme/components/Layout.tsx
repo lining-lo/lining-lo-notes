@@ -86,10 +86,14 @@ function applyAsideHighlight(scrollPaddingTop: number) {
   const id = links[activeIndex].getAttribute("href")?.slice(1) ?? "";
   if (!id) return;
 
-  // 桌面端：右侧目录沿用主题自带的 .aside-active 样式
+  // 桌面端：右侧目录。主题自己的 useBindingAsideScroll 也会往链接上加 .aside-active，
+  // 它按「不含一级标题」的锚点算，和这里会差一项，两边各标一个就出现双高亮。
+  // 所以高亮统一用自定义的 .toc-active，主题那个类在 global.css 里已被取消样式。
   const aside = document.getElementById("aside-container");
-  aside?.querySelectorAll(".aside-active").forEach((el) => el.classList.remove("aside-active"));
-  aside?.querySelector(`a[href="#${id}"]`)?.classList.add("aside-active");
+  aside
+    ?.querySelectorAll(".aside-active, .toc-active")
+    .forEach((el) => el.classList.remove("aside-active", "toc-active"));
+  aside?.querySelector(`a[href="#${id}"]`)?.classList.add("toc-active");
 
   // 窄屏：顶栏里的下拉目录主题不做高亮，这里单独标 toc-active（样式在 global.css）
   const localToc = document.querySelector<HTMLElement>(".rspress-local-toc-container");
