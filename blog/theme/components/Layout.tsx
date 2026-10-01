@@ -275,6 +275,72 @@ function syncAsideOverscroll() {
   }
 }
 
+// 主题在 <=960px 会换成「logo + 搜索图标 + 汉堡」那条窄屏导航，
+// global.css 把这一条整条隐藏，把搜索和暗黑切换补到下面「Menu / 目录」这一条的右侧。
+// 直接搬主题的节点会打乱 React 对 DOM 的接管，所以这里复制外观、点击时转发给原始按钮，
+// 主题自己的搜索弹窗和主题切换逻辑照常走。
+const NARROW_MEDIA = "(max-width: 960px)";
+
+const SEARCH_CONTROL_SELECTORS = [
+  '.rspress-nav [class*="mobileNavMenu"] [class*="mobileNavSearchButton"]',
+  '.rspress-nav [class*="mobileNavSearchButton"]',
+  ".rspress-nav .rspress-nav-search-button",
+];
+
+const APPEARANCE_CONTROL_SELECTORS = [".rspress-nav .rspress-nav-appearance"];
+
+function findLiveControl(selectors: string[]): HTMLElement | null {
+  for (const selector of selectors) {
+    const el = document.querySelector<HTMLElement>(selector);
+    if (el) return el;
+  }
+  return null;
+}
+
+function ensureMobileNavActions() {
+  const menu = document.querySelector<HTMLElement>(".rspress-sidebar-menu");
+  if (!menu) return;
+  const existing = menu.querySelector<HTMLElement>("[data-rp-mobile-actions]");
+  // 放大回桌面宽度后把注入的按钮收掉，避免和左侧导航重复
+  if (!window.matchMedia(NARROW_MEDIA).matches) {
+    existing?.remove();
+    return;
+  }
+  if (existing) return;
+  // 这一条本来就没有按钮（既没有左侧菜单也没有目录）时不注入，免得凭空多出一条
+  if (!menu.querySelector(":scope > button")) return;
+
+  const searchSource = findLiveControl(SEARCH_CONTROL_SELECTORS);
+  const appearanceSource = findLiveControl(APPEARANCE_CONTROL_SELECTORS);
+  if (!searchSource || !appearanceSource) return;
+
+  const actions = document.createElement("div");
+  actions.dataset.rpMobileActions = "true";
+  actions.className = "rp-mobile-nav-actions";
+
+  const searchButton = searchSource.cloneNode(true) as HTMLElement;
+  searchButton.setAttribute("role", "button");
+  searchButton.setAttribute("aria-label", "搜索");
+  searchButton.title = "搜索";
+  searchButton.addEventListener("click", () =>
+    findLiveControl(SEARCH_CONTROL_SELECTORS)?.click(),
+  );
+
+  const appearanceButton = appearanceSource.cloneNode(true) as HTMLElement;
+  appearanceButton.setAttribute("role", "button");
+  appearanceButton.setAttribute("aria-label", "切换主题");
+  appearanceButton.title = "切换主题";
+  appearanceButton.addEventListener("click", () =>
+    findLiveControl(APPEARANCE_CONTROL_SELECTORS)?.click(),
+  );
+
+  actions.append(searchButton, appearanceButton);
+  // 插到「目录」按钮前面，这样右侧的排布是 [搜索][暗黑切换][目录]
+  const tocButton = menu.querySelector<HTMLElement>(":scope > button.ml-auto");
+  if (tocButton) menu.insertBefore(actions, tocButton);
+  else menu.appendChild(actions);
+}
+
 let mermaidInitialized = false;
 
 // Rspress 1.x 不内置 Mermaid：把 ```mermaid 代码块渲染成图表（客户端执行）
@@ -320,7 +386,8 @@ export function Layout(props: LayoutProps) {
 
   // 与 theme-default useUISwitch 中的计算保持一致
   const scrollPaddingTop = useMemo(() => {
-    const navbarHeight = hiddenNav ? 0 : width <= 768 ? 56 : 72;
+    // <=960px 时第一条导航被 global.css 整条隐藏，只统计下面那条 46px 菜单栏
+    const navbarHeight = hiddenNav || width <= 960 ? 0 : 72;
     const sidebarMenuHeight =
       width <= 960 || (width <= 1280 && page.toc.length > 0) ? 46 : 0;
     return navbarHeight + sidebarMenuHeight;
@@ -363,6 +430,7 @@ export function Layout(props: LayoutProps) {
     let lastSignature = "";
     const apply = () => {
       syncAsideOverscroll();
+      ensureMobileNavActions();
       syncLocalTocVisibility();
       const signature = getAsideSignature();
       if (signature === lastSignature) return;
