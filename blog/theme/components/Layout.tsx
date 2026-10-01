@@ -42,6 +42,42 @@ function getTargetTop(element: HTMLElement, scrollPaddingTop: number) {
   );
 }
 
+// 目录里的跳转统一走这里。不能再用浏览器默认锚点行为：hash 没变化时（比如点了小节、
+// 往下翻一段、再点回同一个小节）浏览器不会重新滚动，看起来就是「点了没反应」。
+function scrollToHeading(href: string, scrollPaddingTop: number) {
+  let target: HTMLElement | null = null;
+  try {
+    target = document.getElementById(decodeURIComponent(href.slice(1)));
+  } catch {
+    target = document.getElementById(href.slice(1));
+  }
+  if (!target) return;
+  window.scrollTo({
+    top: getTargetTop(target, scrollPaddingTop),
+    behavior: "smooth",
+  });
+  // 地址栏跟着走，但不写 location.hash —— 那样又会触发一次浏览器默认跳转。
+  // location.hash 是编码过的，比较前先解码，避免每次点击都往历史里塞一条。
+  let current = window.location.hash;
+  try {
+    current = decodeURIComponent(current);
+  } catch {
+    // 保持原样
+  }
+  if (current !== href) window.history.pushState(null, "", href);
+}
+
+// 窄屏那份目录是顶栏里的下拉框，选完要收起来
+function closeLocalToc() {
+  const menu = document.querySelector<HTMLElement>(".rspress-sidebar-menu");
+  const toggle = menu
+    ? Array.from(menu.children)
+        .filter((el) => el.tagName === "BUTTON")
+        .pop()
+    : null;
+  if (toggle instanceof HTMLElement) toggle.click();
+}
+
 // 从实时 DOM 计算当前应高亮的目录项
 function applyAsideHighlight(scrollPaddingTop: number) {
   const links = Array.from(
@@ -227,18 +263,8 @@ function injectH1Links(root: HTMLElement, linkSelector: string) {
     a.style.marginLeft = "0px";
     // "semibold" 不是合法的 CSS 值，会被浏览器丢掉；显式给 500 才能和主题自带条目一致
     a.style.fontWeight = "500";
-    a.addEventListener("click", (e) => {
-      e.preventDefault();
-      window.location.hash = href.slice(1);
-      // 窄屏目录是顶栏里的下拉框，选完要收起来（桌面端不在这个容器里，取不到就跳过）
-      const menu = root.closest(".rspress-sidebar-menu");
-      const toggle = menu
-        ? Array.from(menu.children)
-            .filter((el) => el.tagName === "BUTTON")
-            .pop()
-        : null;
-      if (toggle instanceof HTMLElement) toggle.click();
-    });
+    // 点击行为交给 window 上那个统一的目录点击处理（scrollToHeading），
+    // 这里不再单独挂事件，免得同一篇文章的目录出现两套跳转逻辑
     const span = document.createElement("span");
     span.className = isLocalToc ? "rspress-toc-link-text block" : "aside-link-text block";
     span.textContent = text;
@@ -408,6 +434,34 @@ export function Layout(props: LayoutProps) {
     const onScroll = throttle(syncOutline, 100);
     window.addEventListener("scroll", onScroll);
 
+    // 右侧目录和窄屏下拉目录里的条目，点击统一自己接管：
+    // 浏览器默认的锚点跳转在 hash 不变时不会动，点了同一个标题第二遍就没反应
+    const onTocClick = (event: MouseEvent) => {
+      if (
+        event.button !== 0 ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.shiftKey ||
+        event.altKey
+      ) {
+        return;
+      }
+      const link = (event.target as HTMLElement | null)?.closest?.("a");
+      if (!(link instanceof HTMLAnchorElement)) return;
+      const href = link.getAttribute("href") || "";
+      if (!href.startsWith("#")) return;
+      if (!TOC_ROOTS.some(({ selector }) => link.closest(selector))) return;
+
+      event.preventDefault();
+      scrollToHeading(href, scrollPaddingTop);
+      // 窄屏那个下拉目录选完收起来（主题渲染的条目自己有 onClick，注入的没有）
+      const localToc = link.closest(".rspress-local-toc-container");
+      if (localToc?.classList.contains("rspress-local-toc-container-show")) {
+        closeLocalToc();
+      }
+    };
+    window.addEventListener("click", onTocClick);
+
     // 路由数据与正文渲染是异步的（先更新页面数据、后渲染文章内容），
     // 轮询检测正文锚点变化，正文真正渲染后再应用高亮。
     // 窄屏下拉目录展开时，把当前小节滚到可见位置，否则高亮在列表下面根本看不到
@@ -448,6 +502,7 @@ export function Layout(props: LayoutProps) {
 
     return () => {
       window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("click", onTocClick);
       window.clearInterval(timer);
     };
     // 修复：theme-default 的 useBindingAsideScroll 依赖 headers.length，
