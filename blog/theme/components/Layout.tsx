@@ -52,9 +52,11 @@ function scrollToHeading(href: string, scrollPaddingTop: number) {
     target = document.getElementById(href.slice(1));
   }
   if (!target) return;
+  // 用即时跳转（behavior: "auto"）。长文档里浏览器自带的平滑滚动会拖 1 秒以上，
+  // 点一下目录要「飞」过整篇正文，看着像卡住；想改成动画把这里换回 "smooth" 即可。
   window.scrollTo({
     top: getTargetTop(target, scrollPaddingTop),
-    behavior: "smooth",
+    behavior: "auto",
   });
   // 地址栏跟着走，但不写 location.hash —— 那样又会触发一次浏览器默认跳转。
   // location.hash 是编码过的，比较前先解码，避免每次点击都往历史里塞一条。
