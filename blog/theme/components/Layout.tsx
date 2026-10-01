@@ -93,12 +93,47 @@ function applyAsideHighlight(scrollPaddingTop: number) {
   aside
     ?.querySelectorAll(".aside-active, .toc-active")
     .forEach((el) => el.classList.remove("aside-active", "toc-active"));
-  aside?.querySelector(`a[href="#${id}"]`)?.classList.add("toc-active");
+  const asideTarget = aside?.querySelector<HTMLElement>(`a[href="#${id}"]`);
+  asideTarget?.classList.add("toc-active");
+  // 当前小节快到目录可视区边缘时，让目录自己滚到合适位置（类似飞书文档右侧目录）
+  const asideScroller = getAsideScrollContainer();
+  if (asideScroller && asideTarget) keepActiveVisible(asideScroller, asideTarget);
 
   // 窄屏：顶栏里的下拉目录主题不做高亮，这里单独标 toc-active（样式在 global.css）
   const localToc = document.querySelector<HTMLElement>(".rspress-local-toc-container");
   localToc?.querySelectorAll(".toc-active").forEach((el) => el.classList.remove("toc-active"));
   localToc?.querySelector(`a[href="#${id}"]`)?.classList.add("toc-active");
+}
+
+// 右侧目录的可滚动容器（桌面端那个 sticky 盒子），窄屏下它是 display:none
+function getAsideScrollContainer(): HTMLElement | null {
+  let container = document.getElementById("aside-container")?.parentElement ?? null;
+  while (container && container !== document.body) {
+    const overflowY = window.getComputedStyle(container).overflowY;
+    if (overflowY === "auto" || overflowY === "scroll" || overflowY === "overlay") {
+      return container;
+    }
+    container = container.parentElement;
+  }
+  return null;
+}
+
+// 当前小节被挤到目录可视区边缘（或已经在外面）时，把它挪到靠上的位置，
+// 留出后面的条目 —— 不做处理的话目录会一直停在顶部不动
+function keepActiveVisible(container: HTMLElement, active: HTMLElement) {
+  const containerRect = container.getBoundingClientRect();
+  const activeRect = active.getBoundingClientRect();
+  const margin = activeRect.height; // 上下各留一行的余量
+  const withinView =
+    activeRect.top >= containerRect.top + margin &&
+    activeRect.bottom <= containerRect.bottom - margin;
+  if (withinView) return;
+  const maxScrollTop = container.scrollHeight - container.clientHeight;
+  const target = container.scrollTop + (activeRect.top - containerRect.top - containerRect.height * 0.35);
+  container.scrollTo({
+    top: Math.max(0, Math.min(target, maxScrollTop)),
+    behavior: "smooth",
+  });
 }
 
 // 目录有两处：桌面端是右侧的 #aside-container，窄屏（<1280px）主题会换成顶栏里的
@@ -232,14 +267,8 @@ function getAsideSignature(): string {
 // 目录比可视区高时，滚轮在目录里滚到头后不要继续带着正文一起滚（overscroll 链）；
 // 目录本来就放得下时不接管滚动，否则右侧侧边栏会变成滚轮死区。
 function syncAsideOverscroll() {
-  const aside = document.getElementById("aside-container");
-  let container = aside?.parentElement ?? null;
-  while (container && container !== document.body) {
-    const overflowY = window.getComputedStyle(container).overflowY;
-    if (overflowY === "auto" || overflowY === "scroll" || overflowY === "overlay") break;
-    container = container.parentElement;
-  }
-  if (!container || container === document.body) return;
+  const container = getAsideScrollContainer();
+  if (!container) return;
   const next = container.scrollHeight > container.clientHeight + 1 ? "contain" : "";
   if (container.style.overscrollBehaviorY !== next) {
     container.style.overscrollBehaviorY = next;
