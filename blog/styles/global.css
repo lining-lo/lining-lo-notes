@@ -59,8 +59,14 @@ div[class*="aside-container_"] {
   color: var(--rp-c-text-1);
 }
 
+/* 注意优先级：主题的 .aside-active 和自定义高亮的算法差一个一级标题，滚起来两条经常
+   落在同一个链接上。上面那条「取消 .aside-active」的选择器权重比下面这条高，
+   同一条上两个类都在时就会把高亮盖掉 —— 表现就是高亮一闪一闪、停在某处还会直接没了。
+   所以这里用带 .aside-active 的复合选择器把权重抬上去，保证只要带 .toc-active 就一定高亮。 */
 #aside-container a.toc-active,
-#aside-container a.toc-active:hover {
+#aside-container a.aside-link.aside-active.toc-active,
+#aside-container a.toc-active:hover,
+#aside-container a.aside-link.aside-active.toc-active:hover {
   color: var(--rp-c-link);
   background-color: var(--rp-c-brand-tint);
 }
