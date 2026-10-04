@@ -70,7 +70,7 @@ docker compose up -d
 
 ## 6.接入大模型
 
-![](C:\Users\lining\Downloads\images\image-20261004141508.png)
+![](./images/image-20261004141508.png)
 
 # 二、对接Dify
 
