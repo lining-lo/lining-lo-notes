@@ -9,7 +9,7 @@
 - 使用说明：[USAGE.md](./USAGE.md)
 
 <!-- Summary Start -->
-版本库中共有 `129` 篇文章，总计 `169118` 行，`1026759` 字，`3021857` 字符。
+版本库中共有 `130` 篇文章，总计 `170240` 行，`1036026` 字，`3039488` 字符。
 <!-- Summary End -->
 
 <!-- Content Start -->
@@ -21,6 +21,7 @@
 * [LangChain框架](大模型/LangChain框架.md)
 * [LangGraph框架](大模型/LangGraph框架.md)
 * [MinerU文档解析工具](大模型/MinerU文档解析工具.md)
+* [OpenClaw养虾指南](大模型/OpenClaw养虾指南.md)
 * [RAG_系统中Markdown_与_HTML_表格处理](大模型/RAG_系统中Markdown_与_HTML_表格处理.md)
 * [RAG项目评估](大模型/RAG项目评估.md)
 * [RAG中文档切割的必要性](大模型/RAG中文档切割的必要性.md)
