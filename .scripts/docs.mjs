@@ -68,9 +68,6 @@ export const docs = {
     "轻客管家/11_Docker项目部署",
     "轻客管家/附录-接口文档"
   ],
-  "微服务": [
-    "微服务/01_微服务1"
-  ],
   "星海智伴": [
     "星海智伴/01_项目全景",
     "星海智伴/02_快速搭建项目(若依)",
@@ -158,5 +155,9 @@ export const docs = {
   ],
   "Python": [
     "Python/Python语法"
+  ],
+  "SpringCloud": [
+    "SpringCloud/01_微服务1",
+    "SpringCloud/附录-作业参考1"
   ]
 };
