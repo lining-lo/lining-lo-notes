@@ -4,32 +4,32 @@
 
 | 过滤器工厂                                                   | 作用                                                         | 参数                                                         |
 | :----------------------------------------------------------- | :----------------------------------------------------------- | :----------------------------------------------------------- |
-| [AddRequestHeader](#1AddRequestHeader)                       | 为原始请求添加Header                                         | Header的名称及值                                             |
-| [AddRequestParameter](#2AddRequestParameter)                 | 为原始请求添加请求参数                                       | 参数名称及值                                                 |
-| [AddResponseHeader](#3AddResponseHeader)                    | 为原始响应添加Header                                         | Header的名称及值                                             |
-| [DedupeResponseHeader](#4DedupeResponseHeader)              | 剔除响应头中重复的值                                         | 需要去重的Header名称及去重策略                               |
-| [Hystrix](#5Hystrix)                                        | 为路由引入Hystrix的断路器保护                                | `HystrixCommand`的名称                                       |
-| [FallbackHeaders](#6FallbackHeaders)                        | 为fallbackUri的请求头中添加具体的异常信息                    | Header的名称                                                 |
-| [PrefixPath](#7PrefixPath)                                  | 为原始请求路径添加前缀                                       | 前缀路径                                                     |
-| [PreserveHostHeader](#8PreserveHostHeader)                  | 为请求添加一个preserveHostHeader=true的属性，路由过滤器会检查该属性以决定是否要发送原始的Host | 无                                                           |
-| [RequestRateLimiter](#9RequestRateLimiter)                  | 用于对请求限流，限流算法为令牌桶                             | keyResolver.rateLimiter.statusCode.denyEmptyKey.emptyKeyStatus |
-| [RedirectTo](#10RedirectTo)                                 | 将原始请求重定向到指定的URL                                  | http状态码及重定向的url                                      |
-| [RemoveHopByHopHeadersFilter](#11RemoveHopByHopHeadersFilter) | 为原始请求删除IETF组织规定的一系列Header                     | 默认就会启用，可以通过配置指定仅删除哪些Header               |
-| [RemoveRequestHeader](#12RemoveRequestHeader)               | 为原始请求删除某个Header                                     | Header名称                                                   |
-| [RemoveResponseHeader](#13RemoveResponseHeader)             | 为原始响应删除某个Header                                     | Header名称                                                   |
-| [RewritePath](#14RewritePath)                               | 重写原始的请求路径                                           | 原始路径正则表达式以及重写后路径的正则表达式                 |
-| [RewriteResponseHeader](#15RewriteResponseHeader)           | 重写原始响应中的某个Header                                   | Header名称，值的正则表达式，重写后的值                       |
-| [SaveSession](#16SaveSession)                               | 在转发请求之前，强制执行`WebSession::save`操作               | 无                                                           |
-| [secureHeaders](#17secureHeaders)                           | 为原始响应添加一系列起安全作用的响应头                       | 无，支持修改这些安全响应头的值                               |
-| [SetPath](#18SetPath)                                       | 修改原始的请求路径                                           | 修改后的路径                                                 |
-| [SetResponseHeader](#19SetResponseHeader)                   | 修改原始响应中某个Header的值                                 | Header名称，修改后的值                                       |
-| [SetStatus](#20SetStatus)                                   | 修改原始响应的状态码                                         | HTTP 状态码，可以是数字，也可以是字符串                      |
-| [StripPrefix](#21StripPrefix)                               | 用于截断原始请求的路径                                       | 使用数字表示要截断的路径的数量                               |
-| [Retry](#22Retry)                                           | 针对不同的响应进行重试                                       | retries.statuses.methods.series                              |
-| [RequestSize](#23RequestSize)                               | 设置允许接收最大请求包的大小。如果请求包大小超过设置的值，则返回 `413 Payload Too Large` | 请求包大小，单位为字节，默认值为5M                           |
-| [ModifyRequestBody](#24ModifyRequestBody)                   | 在转发请求之前修改原始请求体内容                             | 修改后的请求体内容                                           |
-| [ModifyResponseBody](#25ModifyResponseBody)                 | 修改原始响应体的内容                                         | 修改后的响应体内容                                           |
-| [DefaultFilters](#26DefaultFilters)                         | 为所有路由添加过滤器                                         | 过滤器工厂名称及值                                           |
+| [AddRequestHeader](#1addrequestheader)                       | 为原始请求添加Header                                         | Header的名称及值                                             |
+| [AddRequestParameter](#2addrequestparameter)                 | 为原始请求添加请求参数                                       | 参数名称及值                                                 |
+| [AddResponseHeader](#3addresponseheader)                     | 为原始响应添加Header                                         | Header的名称及值                                             |
+| [DedupeResponseHeader](#4deduperesponseheader)               | 剔除响应头中重复的值                                         | 需要去重的Header名称及去重策略                               |
+| [Hystrix](#5hystrix)                                         | 为路由引入Hystrix的断路器保护                                | `HystrixCommand`的名称                                       |
+| [FallbackHeaders](#6fallbackheaders)                         | 为fallbackUri的请求头中添加具体的异常信息                    | Header的名称                                                 |
+| [PrefixPath](#7prefixpath)                                   | 为原始请求路径添加前缀                                       | 前缀路径                                                     |
+| [PreserveHostHeader](#8preservehostheader)                   | 为请求添加一个preserveHostHeader=true的属性，路由过滤器会检查该属性以决定是否要发送原始的Host | 无                                                           |
+| [RequestRateLimiter](#9requestratelimiter)                   | 用于对请求限流，限流算法为令牌桶                             | keyResolver.rateLimiter.statusCode.denyEmptyKey.emptyKeyStatus |
+| [RedirectTo](#10redirectto)                                  | 将原始请求重定向到指定的URL                                  | http状态码及重定向的url                                      |
+| [RemoveHopByHopHeadersFilter](#11removehopbyhopheadersfilter) | 为原始请求删除IETF组织规定的一系列Header                     | 默认就会启用，可以通过配置指定仅删除哪些Header               |
+| [RemoveRequestHeader](#12removerequestheader)                | 为原始请求删除某个Header                                     | Header名称                                                   |
+| [RemoveResponseHeader](#13removeresponseheader)              | 为原始响应删除某个Header                                     | Header名称                                                   |
+| [RewritePath](#14rewritepath)                                | 重写原始的请求路径                                           | 原始路径正则表达式以及重写后路径的正则表达式                 |
+| [RewriteResponseHeader](#15rewriteresponseheader)            | 重写原始响应中的某个Header                                   | Header名称，值的正则表达式，重写后的值                       |
+| [SaveSession](#16savesession)                                | 在转发请求之前，强制执行`WebSession::save`操作               | 无                                                           |
+| [secureHeaders](#17secureheaders)                            | 为原始响应添加一系列起安全作用的响应头                       | 无，支持修改这些安全响应头的值                               |
+| [SetPath](#18setpath)                                        | 修改原始的请求路径                                           | 修改后的路径                                                 |
+| [SetResponseHeader](#19setresponseheader)                    | 修改原始响应中某个Header的值                                 | Header名称，修改后的值                                       |
+| [SetStatus](#20setstatus)                                    | 修改原始响应的状态码                                         | HTTP 状态码，可以是数字，也可以是字符串                      |
+| [StripPrefix](#21stripprefix)                                | 用于截断原始请求的路径                                       | 使用数字表示要截断的路径的数量                               |
+| [Retry](#22retry)                                            | 针对不同的响应进行重试                                       | retries.statuses.methods.series                              |
+| [RequestSize](#23requestsize)                                | 设置允许接收最大请求包的大小。如果请求包大小超过设置的值，则返回 `413 Payload Too Large` | 请求包大小，单位为字节，默认值为5M                           |
+| [ModifyRequestBody](#24modifyrequestbody)                    | 在转发请求之前修改原始请求体内容                             | 修改后的请求体内容                                           |
+| [ModifyResponseBody](#25modifyresponsebody)                  | 修改原始响应体的内容                                         | 修改后的响应体内容                                           |
+| [DefaultFilters](#26defaultfilters)                          | 为所有路由添加过滤器                                         | 过滤器工厂名称及值                                           |
 
 > Tips：每个过滤器工厂都对应一个实现类，并且这些类的名称必须以`GatewayFilterFactory`结尾，这是Spring Cloud Gateway的一个约定，例如`AddRequestHeader`对应的实现类为`AddRequestHeaderGatewayFilterFactory`。
 >
