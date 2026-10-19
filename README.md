@@ -9,7 +9,7 @@
 - 使用说明：[USAGE.md](./USAGE.md)
 
 <!-- Summary Start -->
-版本库中共有 `135` 篇文章，总计 `175219` 行，`1067934` 字，`3140349` 字符。
+版本库中共有 `136` 篇文章，总计 `175332` 行，`1068559` 字，`3141892` 字符。
 <!-- Summary End -->
 
 <!-- Content Start -->
@@ -173,5 +173,6 @@
 * [02_微服务2](SpringCloud/02_微服务2.md)
 * [附录-作业参考1](SpringCloud/附录-作业参考1.md)
 * [附录-Gateway过滤器工厂](SpringCloud/附录-Gateway过滤器工厂.md)
+* [附录-Jmeter工具](SpringCloud/附录-Jmeter工具.md)
 
 <!-- Content End -->
