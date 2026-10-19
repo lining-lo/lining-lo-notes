@@ -158,6 +158,7 @@ export const docs = {
   ],
   "SpringCloud": [
     "SpringCloud/01_微服务1",
+    "SpringCloud/02_微服务2",
     "SpringCloud/附录-作业参考1"
   ]
 };

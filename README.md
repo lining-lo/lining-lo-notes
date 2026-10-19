@@ -9,7 +9,7 @@
 - 使用说明：[USAGE.md](./USAGE.md)
 
 <!-- Summary Start -->
-版本库中共有 `133` 篇文章，总计 `173145` 行，`1055334` 字，`3100404` 字符。
+版本库中共有 `134` 篇文章，总计 `174599` 行，`1064523` 字，`3128468` 字符。
 <!-- Summary End -->
 
 <!-- Content Start -->
@@ -170,6 +170,7 @@
 
 ## SpringCloud
 * [01_微服务1](SpringCloud/01_微服务1.md)
+* [02_微服务2](SpringCloud/02_微服务2.md)
 * [附录-作业参考1](SpringCloud/附录-作业参考1.md)
 
 <!-- Content End -->
