@@ -162,7 +162,7 @@ export const docs = {
     "SpringCloud/03_微服务3",
     "SpringCloud/04_MQ基础",
     "SpringCloud/05_MQ高级",
-    "SpringCloud/附录-作业参考1",
+    "SpringCloud/附录-作业参考",
     "SpringCloud/附录-Gateway过滤器工厂",
     "SpringCloud/附录-Jmeter工具"
   ]
