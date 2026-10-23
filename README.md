@@ -9,7 +9,7 @@
 - 使用说明：[USAGE.md](./USAGE.md)
 
 <!-- Summary Start -->
-版本库中共有 `140` 篇文章，总计 `181909` 行，`1115154` 字，`3257539` 字符。
+版本库中共有 `141` 篇文章，总计 `183321` 行，`1123220` 字，`3278429` 字符。
 <!-- Summary End -->
 
 <!-- Content Start -->
@@ -175,6 +175,7 @@
 * [04_MQ基础](SpringCloud/04_MQ基础.md)
 * [05_MQ高级](SpringCloud/05_MQ高级.md)
 * [06_ElasticSearch1](SpringCloud/06_ElasticSearch1.md)
+* [07_ElasticSearch2](SpringCloud/07_ElasticSearch2.md)
 * [附录-作业参考](SpringCloud/附录-作业参考.md)
 * [附录-Gateway过滤器工厂](SpringCloud/附录-Gateway过滤器工厂.md)
 * [附录-Jmeter工具](SpringCloud/附录-Jmeter工具.md)
