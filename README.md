@@ -9,7 +9,7 @@
 - 使用说明：[USAGE.md](./USAGE.md)
 
 <!-- Summary Start -->
-版本库中共有 `159` 篇文章，总计 `221060` 行，`1388199` 字，`4022104` 字符。
+版本库中共有 `160` 篇文章，总计 `221829` 行，`1394812` 字，`4035545` 字符。
 <!-- Summary End -->
 
 <!-- Content Start -->
@@ -53,6 +53,7 @@
 * [Milvus向量检索方式](后端/Milvus向量检索方式.md)
 * [MongoDB数据库](后端/MongoDB数据库.md)
 * [Mysql数据库](后端/Mysql数据库.md)
+* [Nginx服务](后端/Nginx服务.md)
 * [Redies数据库](后端/Redies数据库.md)
 * [Skill安装与使用](后端/Skill安装与使用.md)
 
