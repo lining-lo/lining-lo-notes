@@ -7,3 +7,20 @@ blog/site-dev/
 .DS_Store
 blog/dev-server*.log
 
+# 图片托管在七牛，仓库只留 Markdown。
+# 注意负向规则必须写成 !blog/logo/**：只 negate 目录不影响目录里被 *.png 命中的文件。
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.svg
+*.avif
+*.bmp
+*.ico
+!blog/logo/**
+
+# 七牛密钥与上传缓存，都不入库
+.env
+.assets-cache.json
+

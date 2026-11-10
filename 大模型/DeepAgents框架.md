@@ -473,7 +473,7 @@ if __name__ == '__main__':
 3. **非阻塞主线程**：在 GUI 程序（如 PyQt/Tkinter）、定时任务中调用智能体，`astream()` 异步执行不会让界面卡死 / 定时任务中断。
 4. 注意：astream() 返回异步迭代器，必须用 `async for`进行遍历
 
-<img src="images\image-20260605230424307.png" alt="image-20260605230424307"  />
+<img src="../image/image-20260605230424307.png" alt="image-20260605230424307" />
 
 ```python
 """
@@ -1519,7 +1519,7 @@ result = main_agent.invoke(Command(resume={...}), config=config)
 
 **步骤4：给不同工具操作添加审批意见**
 
-<img src="images\image-20260604190518897.png" alt="image-20260604190518897" style="zoom:50%;" />
+<img src="../image/image-20260604190518897.png" alt="image-20260604190518897" style="zoom:50%;" />
 
 | 字段              | 含义                                                         |
 | :---------------- | :----------------------------------------------------------- |

@@ -99,8 +99,10 @@ const processTimeline = async () => {
       preLineDate = date[1];
       continue;
     }
-    // 兼容旧版「第 N 题」写法，统一输出为「第 N 篇」
-    const data = /第.+?[题篇]：\[(.+?)\]\((.+?)\)/.exec(line);
+    // 兼容旧版「第 N 题」写法，统一输出为「第 N 篇」。
+    // 路径必须锚到行尾的 `.md)`：非贪婪的 `(.+?)\)` 会在文件名自带的括号处提前截断
+    //（如 `星海智伴/05_配置知识库(RAG).md`），导致该篇每跑一次就被当成新文章重新插到最前面。
+    const data = /第.+?[题篇]：\[(.+?)\]\((.+?\.md)\)\s*$/.exec(line);
     if (data && data[1] && data[2] && preLineDate) {
       const p = decodeURIComponent(data[2]).replace(/\.md$/, "");
       if (pathSet.has(p)) {

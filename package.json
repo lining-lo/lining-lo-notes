@@ -7,7 +7,14 @@
     "sync": "node .scripts/sync-site.mjs",
     "build:site": "pnpm --dir blog build",
     "scan": "node .scripts/scan-docs.mjs",
-    "update": "node .scripts/scan-docs.mjs && node .scripts/overview.mjs && node .scripts/sync-site.mjs"
+    "assets": "node .scripts/asset-sync.mjs",
+    "assets:check": "node .scripts/asset-sync.mjs --dry-run",
+    "assets:pull": "node .scripts/asset-sync.mjs --pull",
+    "test": "node --test .scripts/assets.test.mjs",
+    "update": "node .scripts/scan-docs.mjs && node .scripts/overview.mjs && node .scripts/sync-site.mjs && node .scripts/asset-sync.mjs --lenient"
   },
-  "packageManager": "pnpm@11.16.0"
+  "packageManager": "pnpm@11.16.0",
+  "devDependencies": {
+    "qiniu": "^7.15.2"
+  }
 }

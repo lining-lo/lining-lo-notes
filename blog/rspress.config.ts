@@ -135,19 +135,4 @@ export default defineConfig({
       },
     ],
   },
-  builderConfig: {
-    output: {
-      copy: {
-        patterns: [
-          {
-            // 把 docs 下的非 md 资源（图片等）原样复制到产物，供 HTML <img> 等原始引用使用
-            from: "docs",
-            to: "",
-            filter: (filePath: string) =>
-              !filePath.endsWith(".md") && !filePath.endsWith(".DS_Store"),
-          },
-        ],
-      },
-    },
-  },
 });

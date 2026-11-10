@@ -1,6 +1,6 @@
 # lining-lo-notes 使用说明
 
-这是一套「低摩擦写作 + 自动发布」的学习笔记系统：你只负责写 Markdown，脚本会自动扫描生成文章索引、维护 README 目录与统计、学习时间线，并把笔记（含图片）构建成博客自动发布到 GitHub Pages。
+这是一套「低摩擦写作 + 自动发布」的学习笔记系统：你只负责写 Markdown，脚本会自动扫描生成文章索引、维护 README 目录与统计、学习时间线，把笔记构建成博客自动发布到 GitHub Pages。**图片托管在七牛云、不进仓库**，写作时照旧写相对路径，构建时自动换成 CDN 地址。
 
 ---
 
@@ -21,7 +21,10 @@ lining-lo-notes/
 │  ├─ docs.mjs                    # ★ 文章索引（scan-docs.mjs 自动生成，也可手改）
 │  ├─ scan-docs.mjs               # 自动扫描分类目录，重新生成 docs.mjs
 │  ├─ overview.mjs                # 更新 README.md 与 Timeline.md
-│  └─ sync-site.mjs               # 同步文章+图片到 blog/docs（自动注入页面标题），并生成侧边栏
+│  ├─ sync-site.mjs               # 同步文章到 blog/docs（注入标题、把图片引用改成 CDN 地址）+ 生成侧边栏
+│  ├─ assets.mjs                  # 七牛配置默认值、图片 key/URL 生成（纯函数）
+│  ├─ asset-sync.mjs              # ★ 上传图片到七牛（增量）/ 反向恢复，见第 2.5 节
+│  └─ assets.test.mjs             # 上述纯函数的单测
 ├─ blog/                          # 博客工程（Rspress）
 │  ├─ rspress.config.ts           # 博客配置
 │  ├─ sidebar.ts                  # 侧边栏，自动生成，勿手改
@@ -32,7 +35,9 @@ lining-lo-notes/
 ├─ README.md                      # 自动维护（Summary/Content 两个区块）
 ├─ Timeline.md                    # 自动维护（学习时间线）
 ├─ USAGE.md                       # 本说明文档
-├─ update.cmd                     # 一键：扫描索引 + 更新 README/Timeline + 同步博客
+├─ .env                           # 七牛 AK/SK（不入库，见第 2.5 节）
+├─ .env.example                   # 上面的模板，复制成 .env 再填
+├─ update.cmd                     # 一键：扫描索引 + 更新 README/Timeline + 同步博客 + 上传图片
 ├─ commit.cmd                     # 一键提交并推送
 └─ package.json                   # 命令别名
 ```
@@ -49,13 +54,37 @@ pnpm -v
 - 提示「pnpm 不是内部或外部命令」→ pnpm 未安装或终端没刷新 PATH，**重开一个终端**再试
 - 本机已通过 Node 自带的 corepack 安装好 pnpm（位于 `%LOCALAPPDATA%\pnpm`），正常重开终端即可使用；若以后换机器，安装方式见下方 FAQ
 
-## 2. 快速上手（五步）
+## 2. 快速上手（四步）
 
 1. **写文章**：在某个分类目录新建 `.md` 文件，例如 `大模型/LangChain框架.md`；图片放文章同目录、分类的 `images/` 子目录，或根目录 `image/` 里
-2. **扫描**：运行 `update.cmd`（或 `node .scripts/scan-docs.mjs`），自动扫描分类目录生成文章索引，不用手动登记
-3. **同步**：`update.cmd` 会继续执行 `overview.mjs` 和 `sync-site.mjs`，README、时间线、博客源文件（含图片）全部自动更新
-4. **预览**：`pnpm --dir blog dev`，浏览器打开 http://localhost:3000/lining-lo-notes/
-5. **发布**：满意后运行 `commit.cmd`，自动提交并推送到 GitHub，线上博客随之更新
+2. **一条命令**：运行 `update.cmd`。它会依次扫描索引 → 更新 README/Timeline → 同步博客源文件 → 把新图片增量上传到七牛
+3. **预览**：`pnpm --dir blog dev`，浏览器打开 http://localhost:3000/lining-lo-notes/
+4. **发布**：满意后运行 `commit.cmd`，自动提交并推送到 GitHub，线上博客随之更新
+
+## 2.5 图片托管在七牛（首次配置）
+
+图片不再进仓库：它们放在分类目录和 `image/` 下（跟以前一模一样），但被 `.gitignore` 排除，只留在本地，由脚本上传到七牛 `dev-wallpaper` 空间、通过 `https://lining-lo.top/lining-lo-notes/` 分发。
+
+**核心理念：本地源图是主副本，七牛是分发副本。** 仓库里只留 Markdown 引用，本地图片别删。
+
+首次使用需要建一个 `.env`（已在 `.gitignore` 里，不会入库）：
+
+```
+QINIU_AK=你的AK
+QINIU_SK=你的SK
+```
+
+`bucket / domain / prefix` 有仓库内置默认值（`.scripts/assets.mjs` 的 `DEFAULTS`），一般不用写；要改才在 `.env` 里覆盖。**AK/SK 用只对这个空间有写权限的独立密钥，别用主账号的。**
+
+相关命令：
+
+| 命令 | 作用 |
+| --- | --- |
+| `pnpm assets` | 把新增/改动的图片上传到七牛（增量，已传过的会跳过） |
+| `pnpm assets:check` | 只列出「待核对」的图片和总传输量，不发任何网络请求 |
+| `pnpm assets:pull` | 反向恢复：把七牛有、本地缺的图片下载回来 |
+
+上传是**增量**的：每次只处理新增或改动过的图片，其余靠本地缓存 `.assets-cache.json`（不入库）直接跳过；缓存丢了也会用一次远端清单比对兜底，不会全量重传。
 
 ## 3. 日常写作流程（详细）
 
@@ -105,18 +134,16 @@ const twoSum = (nums, target) => { /* ... */ };
 1. **文章同目录**：`算法/screenshot.png`，引用 `![图](./screenshot.png)`
 2. **分类的 images/ 子目录**：`算法/images/运行截图.png`，引用 `![图](./images/运行截图.png)`
 3. **根目录公共 image/**：`image/架构图.png`，引用 `![图](../image/架构图.png)`（多篇文章共用一张图时最方便；`images/` 目录也兼容）
-4. **HTML `<img>` 写法也可以**：`<img src="../image/架构图.png" style="zoom:60%;" />`。`sync-site.mjs` 会自动把它转成 Markdown 写法并同步图片；注意 `style`/`zoom` 等属性**不会**保留（Rspress 不渲染裸 HTML `<img>`，图片会按博客列宽显示）
+4. **HTML `<img>` 写法也可以**：`<img src="../image/架构图.png" style="zoom:60%;" />`。`sync-site.mjs` 会自动把它转成 Markdown 写法并把地址换成 CDN；注意 `style`/`zoom` 等属性**不会**保留（Rspress 不渲染裸 HTML `<img>`，图片会按博客列宽显示）
 
 规则与说明：
 
-- 支持格式：`png / jpg / jpeg / gif / webp / svg / avif / bmp / ico`，子目录会一并同步
-- **中文文件名也可以**：博客构建不支持中文文件名，`sync-site.mjs` 会自动把中文名图片改为 ASCII 名（如 `架构图.png` → `img-bfbeb75c.png`）再同步进博客，仓库里的源文件和引用不用改。同步时终端会打印类似日志：
-  ```
-  [info] 图片已自动改为 ASCII 名同步：image/架构图.png -> image/img-bfbeb75c.png
-  ```
-- 英文文件名保持原名不动，最省心；引用指向的图片文件不存在时终端会给出 `[warn]` 提示，写完后留意检查
-- 小图片会被博客构建内联成 base64；大图片输出到 `static/` 下并自动带 `/lining-lo-notes/` 前缀，无需手动处理
-- 建议单张图控制在 1MB 以内；大量大图会拖慢博客首屏
+- 支持格式：`png / jpg / jpeg / gif / webp / svg / avif / bmp / ico`
+- **中文文件名、空格、括号都可以**：会被百分号编码进 URL，但控制台里仍是原始文件名，不用改名
+- 地址形如 `https://lining-lo.top/lining-lo-notes/<分类>/images/xxx.png`，由「仓库相对路径」机械拼出，不需要任何映射表
+- 引用指向的图片本地不存在时终端会给 `[warn]` 提示（CI 的 checkout 里没有图片，会自动静默）
+- 图片不再参与博客构建，所以既不会 base64 内联、也不会输出到 `static/`
+- 建议单张图控制在 1MB 以内；现在直接从 CDN 加载，大图照样拖慢首屏
 
 页面底部的 **Last Updated** 显示的是仓库里对应源文章的修改时间（`blog/docs` 由脚本生成、不入库，git 拿不到历史，所以用文件 mtime）；每次保存文章后更新时间会自动变化，无需手动处理。
 
@@ -149,10 +176,12 @@ update.cmd
 node .scripts/scan-docs.mjs
 node .scripts/overview.mjs
 node .scripts/sync-site.mjs
+node .scripts/asset-sync.mjs
 ```
 
 - `overview.mjs`：重新统计全部文章，重写 `README.md`（文章数/行数/字数/字符数 + 分类目录）和 `Timeline.md`（按「第 N 篇」倒序，新文章以今天日期插入）
-- `sync-site.mjs`：把**已登记**的文章和图片复制到 `blog/docs/`，生成博客首页 `blog/docs/index.md` 和侧边栏 `blog/sidebar.ts`
+- `sync-site.mjs`：把**已登记**的文章复制到 `blog/docs/`（注入页面标题、把图片引用改写成 CDN 地址），生成博客首页 `blog/docs/index.md` 和侧边栏 `blog/sidebar.ts`；**不要求本地有图片文件**
+- `asset-sync.mjs`：把新增/改动的图片增量上传到七牛。`update.cmd` 里带 `--lenient`——没配密钥时只警告不中断，方便离线写作和本地预览；但没配密钥就传不上去，**提交前记得补跑一次**
 
 ### 第 5 步：本地预览
 
@@ -178,10 +207,14 @@ git push
 
 | 命令 | 作用 |
 | --- | --- |
-| `update.cmd` | 一键：扫描索引 + 更新 README/Timeline + 同步博客 |
+| `update.cmd` | 一键：扫描索引 + 更新 README/Timeline + 同步博客 + 上传图片 |
 | `node .scripts/scan-docs.mjs` | 自动扫描分类目录，重新生成文章索引 |
 | `node .scripts/overview.mjs` | 更新 README 统计/目录 + Timeline |
-| `node .scripts/sync-site.mjs` | 同步文章与图片到博客 + 生成侧边栏 |
+| `node .scripts/sync-site.mjs` | 同步文章到博客（图片改写为 CDN 地址）+ 生成侧边栏 |
+| `pnpm assets` | 上传新增/改动的图片到七牛（增量） |
+| `pnpm assets:check` | 预览待上传清单与总传输量（不联网） |
+| `pnpm assets:pull` | 从七牛反向恢复本地缺失的图片 |
+| `pnpm test` | 跑 `.scripts/assets.mjs` 的单测 |
 | `pnpm --dir blog dev` | 本地预览（开发服务器） |
 | `pnpm --dir blog build` | 本地构建（产物在 `blog/site-dev/`） |
 | `pnpm --dir blog preview` | 本地预览构建产物 |
@@ -212,11 +245,12 @@ README 里有两段被注释包裹的区域，脚本**只重写**它们，其余
 - 编号按总数倒序：最新一篇是「第 N 篇」，最早是「第 1 篇」
 - 删除文章（删文件 + 重跑扫描）后重跑脚本，条目会自动消失
 
-### 图片同步规则
+### 图片处理规则
 
-- 同步时复制各分类目录和根目录 `image/`（或 `images/`）下的所有支持格式图片（含子目录）到 `blog/docs/`
-- 文章里引用的中文名图片会额外生成一个 ASCII 名副本（`img-<8位哈希>.png`）并改写博客文章里的引用，仓库源文件不变
-- 相对引用（`./`、`./images/`、`../image/`、`../images/` 等指向仓库内图片的写法）都会正确处理；站外 URL、以 `/` 开头的绝对路径保持原样
+- 构建期把文章里的相对图片引用（`./`、`./images/`、`../image/`、`../images/`）解析成仓库相对路径，再机械拼成 CDN 地址；站外 URL、以 `/` 开头的绝对路径保持原样
+- 图片 key 就是「`lining-lo-notes/` + 仓库相对路径」，所以七牛控制台里能按分类看清是哪篇文章的图
+- 图片不参与博客构建，产物里也没有图片文件（只剩站点自身的 `logo.png` / `favicon.ico` / `apple-touch-icon.png`）
+- 本地图片目录（分类下的 `images/`、根 `image/`）被 `.gitignore` 排除，只用于上传，不入库
 
 ## 6. 发布到 GitHub Pages（一次性配置）
 
@@ -260,10 +294,10 @@ A：`sync-site.mjs` 同步时会自动给文章注入 `title: 文件名`，所�
 A：删掉文件后，运行 `update.cmd`（会自动扫描 + 更新），条目就会消失。
 
 **Q：文章里怎么放图片？图片名能写中文吗？**
-A：图片放在文章同目录、分类的 `images/` 子目录或根目录 `image/` 里，用相对路径 `![说明](./文件名.png)` 或 `![说明](../image/文件名.png)` 引用即可。中文文件名也支持：`sync-site.mjs` 会自动把中文名图片改为 ASCII 名（如 `img-xxx.png`）再进博客，源文件无需改名。
+A：图片放在文章同目录、分类的 `images/` 子目录或根目录 `image/` 里，用相对路径 `![说明](./文件名.png)` 或 `![说明](../image/文件名.png)` 引用即可。中文名、空格、括号都支持，会被自动编码进 URL，源文件不用改名。写完跑 `update.cmd`，新图会自动上传到七牛。
 
-**Q：图片在 GitHub 上正常，但博客里显示裂图？**
-A：确认 ① 跑过 `update.cmd`（或至少 `node .scripts/sync-site.mjs`）；② 引用路径与图片实际位置一致（注意 `./` 前缀和 `../` 层级）；③ 图片文件已提交（`git add -A` 会包含图片）。改完重新同步 + 推送即可。
+**Q：图片本地能看到，但线上裂图？**
+A：图片现在托管在七牛，按顺序排查：① 新加的图还没上传——跑 `pnpm assets`（或 `update.cmd`）再推；② 引用路径和图片实际位置不一致（注意 `./` 前缀和 `../` 层级），本地跑一次会给 `[warn]`；③ 图片文件根本不在本地了——用 `pnpm assets:pull` 从七牛拉回来。另外记住**图片不在 git 里**，`git push` 不会带上图片，必须靠上传。
 
 **Q：怎么新增一个分类？**
 A：直接建一个目录放文章（例如 `工程化/xxx.md`），跑 `update.cmd` 即可自动识别，不用手动登记。

@@ -1,14 +1,15 @@
 import fs from "node:fs/promises";
+import { existsSync } from "node:fs";
 import path from "node:path";
-import { createHash } from "node:crypto";
-import { fileURLToPath } from "node:url";
 import { docs } from "./docs.mjs";
+import { assetUrl, isImage, loadAssetConfig, root } from "./assets.mjs";
 
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const blog = path.join(root, "blog");
 const docsDir = path.join(blog, "docs");
 const encode = (p) => p.replace(/ /g, "%20");
-const IMAGE_EXT = new Set([".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg", ".avif", ".bmp", ".ico"]);
+
+/** 图片托管在七牛：地址在构建期拼出来，仓库与 CI 都不需要图片文件 */
+const CFG = await loadAssetConfig();
 
 /** 给文章补 frontmatter title：默认取文件名（与左侧侧边栏文本一致）；文章自带 frontmatter title 时以文章为准 */
 const injectTitle = (content, mdName) => {
@@ -26,16 +27,6 @@ const injectTitle = (content, mdName) => {
   return `---\ntitle: "${title}"\n---\n\n${content}`;
 };
 
-/** 非 ASCII 图片名 -> ASCII 名（博客构建不支持中文文件名）。hash 基于仓库相对路径，保证多篇文章引用同一张图时名字一致 */
-const asciiImageName = (repoRel) => {
-  const dir = path.posix.dirname(repoRel);
-  const ext = path.extname(repoRel).toLowerCase();
-  const hash = createHash("sha1").update(repoRel).digest("hex").slice(0, 8);
-  return `${dir === "." ? "" : dir + "/"}img-${hash}${ext}`;
-};
-
-const isImage = (rel) => IMAGE_EXT.has(path.extname(rel).toLowerCase());
-
 /** 把文章里的相对引用（./x、../images/x 等）解析为仓库相对路径，越界返回 null */
 const toRepoRel = (articleGroup, ref) => {
   let decoded = ref;
@@ -48,25 +39,25 @@ const toRepoRel = (articleGroup, ref) => {
   return path.relative(root, abs).replace(/\\/g, "/");
 };
 
-/** 解析并复制文章引用的图片到博客，返回博客内相对路径（如 ../images/img-xxx.jpg）；无法处理返回 null */
-const resolveImage = async (group, ref) => {
+/** 本地图片目录在、但引用指向的文件不在时才提示（CI 里图片目录不存在，自然静默，不刷屏） */
+const warnMissingLocally = (item, ref, repoRel) => {
+  const abs = path.join(root, repoRel);
+  if (!existsSync(path.dirname(abs)) || existsSync(abs)) return;
+  console.warn(`[warn] 图片引用不存在，请检查路径：${item}.md -> ${ref}`);
+};
+
+/**
+ * 把文章里的相对图片引用解析成七牛 CDN 地址；无法处理返回 null。
+ *
+ * 关键：**不以「文件存在」为条件**。图片已不入库，CI 的 checkout 里根本没有图片文件，
+ * 一旦这里因读不到文件而返回 null，引用就会退回相对路径 → 全站裂图。
+ * 存在性只作为本地提示（见 warnMissingLocally），真正的校验在 asset-sync 里做。
+ */
+const resolveImage = (item, group, ref) => {
   const repoRel = toRepoRel(group, ref);
   if (!repoRel || !isImage(repoRel)) return null;
-  const srcAbs = path.join(root, repoRel);
-  let buf;
-  try {
-    buf = await fs.readFile(srcAbs);
-  } catch {
-    return null;
-  }
-  const finalRel = /[^\x00-\x7F]/.test(repoRel) ? asciiImageName(repoRel) : repoRel;
-  const blogAbs = path.join(docsDir, finalRel);
-  await fs.mkdir(path.dirname(blogAbs), { recursive: true });
-  await fs.writeFile(blogAbs, buf);
-  if (/[^\x00-\x7F]/.test(repoRel)) {
-    console.log(`[info] 图片已自动改为 ASCII 名同步：${repoRel} -> ${finalRel}`);
-  }
-  return path.relative(path.join(docsDir, group), blogAbs).replace(/\\/g, "/");
+  warnMissingLocally(item, ref, repoRel);
+  return assetUrl(repoRel, CFG);
 };
 
 /** 同步各分类文章与图片到 blog/docs */
@@ -109,13 +100,9 @@ const syncDocs = async () => {
         if (inCode(m.index) || inInlineCode(m.index)) continue;
         const ref = m[2].trim();
         if (/^[a-z][a-z0-9+.-]*:/i.test(ref) || ref.startsWith("/") || ref.startsWith("#")) continue;
-        const blogRel = await resolveImage(group, ref);
-        if (!blogRel) {
-          console.warn(`[warn] 图片引用不存在，请检查路径：${item}.md -> ${ref}`);
-          continue;
-        }
-        const refText = blogRel.startsWith(".") ? blogRel : `./${blogRel}`;
-        replaces.push({ start: m.index, end: mdImg.lastIndex, text: `![${m[1]}](${refText})` });
+        const url = resolveImage(item, group, ref);
+        if (!url) continue;
+        replaces.push({ start: m.index, end: mdImg.lastIndex, text: `![${m[1]}](${url})` });
       }
       // HTML 图片写法：<img src="相对路径" ...> → 转成 Markdown 写法（Rspress 不渲染裸 HTML <img>）
       const htmlImg = /<img\b[^>]*>/g;
@@ -125,14 +112,10 @@ const syncDocs = async () => {
         if (!srcMatch) continue;
         const ref = srcMatch[1].trim();
         if (/^[a-z][a-z0-9+.-]*:/i.test(ref) || ref.startsWith("/") || ref.startsWith("#")) continue;
-        const blogRel = await resolveImage(group, ref);
-        if (!blogRel) {
-          console.warn(`[warn] 图片引用不存在，请检查路径：${item}.md -> ${ref}`);
-          continue;
-        }
-        const refText = blogRel.startsWith(".") ? blogRel : `./${blogRel}`;
+        const url = resolveImage(item, group, ref);
+        if (!url) continue;
         const alt = path.basename(ref, path.extname(ref));
-        replaces.push({ start: m.index, end: htmlImg.lastIndex, text: `![${alt}](${refText})` });
+        replaces.push({ start: m.index, end: htmlImg.lastIndex, text: `![${alt}](${url})` });
       }
       replaces.sort((a, b) => b.start - a.start);
       for (const r of replaces) {
@@ -147,30 +130,8 @@ const syncDocs = async () => {
       await fs.writeFile(path.join(to, `${mdName}.md`), content);
     }
   }
-  // 同步各分类目录下的图片（含子目录），未引用的图片也一起带上
-  for (const group of Object.keys(docs)) {
-    const from = path.join(root, group);
-    const entries = await fs.readdir(from, { recursive: true });
-    for (const rel of entries) {
-      if (!isImage(rel)) continue;
-      const dst = path.join(docsDir, group, rel);
-      await fs.mkdir(path.dirname(dst), { recursive: true });
-      await fs.copyFile(path.join(from, rel), dst);
-    }
-  }
-  // 同步根目录公共图片目录（image/ 或 images/，支持 ../image/xxx.png 或 ../images/xxx.png 引用）
-  for (const imgRoot of ["image", "images"]) {
-    const from = path.join(root, imgRoot);
-    try {
-      const entries = await fs.readdir(from, { recursive: true });
-      for (const rel of entries) {
-        if (!isImage(rel)) continue;
-        const dst = path.join(docsDir, imgRoot, rel);
-        await fs.mkdir(path.dirname(dst), { recursive: true });
-        await fs.copyFile(path.join(from, rel), dst);
-      }
-    } catch {}
-  }
+  // 图片不再复制进 blog/docs：文章里的引用已在上面改写成七牛 CDN 地址，
+  // 所以产物里不会再有图片，也就没有之前那两份冗余副本。
   // 同步博客公共资源（logo/favicon 等）到 blog/docs/public/，供 rspress.config 引用
   const logoDir = path.join(blog, "logo");
   try {
