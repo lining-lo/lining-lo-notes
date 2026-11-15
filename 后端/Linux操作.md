@@ -505,13 +505,13 @@ drwxr-x--- 15 lining    lining    4096  5月  6 22:38 lining/
 
 > 附:sudo设置普通用户具有root权限 -> 了解,不演示
 >
-> **1）******添加testu用户，并对其设置密码。\****
+> **1）** 添加testu用户，并对其设置密码。
 >
 > root@ubuntu-1:~#useradd testu
 >
 > root@ubuntu-1:~#passwd testu
 >
-> **2）******修改配置文件\****
+> **2）** 修改配置文件
 >
 > lining@ubuntu-1:~$vi /etc/sudoers
 >
